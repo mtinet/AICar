@@ -7,6 +7,6 @@
 
 
 ### 전체 테스트  
-* [코드](https://github.com/mtinet/autonomousCar/blob/master/code/autonomousCar.ino)  
+* [코드 링크](https://github.com/mtinet/autonomousCar/blob/master/code/autonomousCar.ino)  
 * 테스트 회로도  
 ![](https://github.com/mtinet/autonomousCar/blob/master/image/totalCircuit.png?raw=true)  
