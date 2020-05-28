@@ -26,3 +26,82 @@
 
 아두이노 아날로그 출력(p6) - 모터드라이버 아날로그 입력(페달)
 */
+
+
+const int dirPin = 2;  // 회전 방향
+const int stepPin = 3; // 스텝 펄스
+ 
+// Motor steps per rotation
+const int STEPS_PER_REV = 400; // 모터 1회전 
+ 
+void setup() {
+  
+  // Setup the pins as Outputs
+  pinMode(stepPin,OUTPUT); 
+  pinMode(dirPin,OUTPUT);
+}
+void loop() {
+  // 모터가 '시계방향'으로 회전하도록 신호부여
+  digitalWrite(dirPin,HIGH); 
+  
+  // 500마이크로초 주기로 모터 축이 5회전하는 코드
+  // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
+  // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
+  for(int x = 0; x < STEPS_PER_REV*5; x++) {
+    digitalWrite(stepPin,HIGH); 
+    delayMicroseconds(500); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(500); 
+  }
+  
+  // 1초 쉼
+  delay(1000); 
+  
+  //모터가 '반시계방향'으로 회전하도록 신호부여
+  digitalWrite(dirPin,LOW); 
+  
+  // 500마이크로초 주기로 모터 축이 5회전하는 코드
+  // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
+  // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
+  for(int x = 0; x < STEPS_PER_REV*5; x++) {
+    digitalWrite(stepPin,HIGH); 
+    delayMicroseconds(500); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(500); 
+  }
+  
+  // 1초 쉼
+  delay(1000); 
+    
+    // 모터가 '반시계방향'으로 회전하도록 신호부여
+  digitalWrite(dirPin,LOW); 
+  
+  // 500마이크로초 주기로 모터 축이 5회전하는 코드
+  // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
+  // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
+  for(int x = 0; x < STEPS_PER_REV*5; x++) {
+    digitalWrite(stepPin,HIGH); 
+    delayMicroseconds(500); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(500); 
+  }
+  
+  // 1초 쉼
+  delay(1000); 
+  
+  //모터가 '시계방향'으로 회전하도록 신호부여
+  digitalWrite(dirPin,HIGH); 
+  
+  // 500마이크로초 주기로 모터 축이 5회전하는 코드
+  // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
+  // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
+  for(int x = 0; x < STEPS_PER_REV*5; x++) {
+    digitalWrite(stepPin,HIGH); 
+    delayMicroseconds(500); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(500); 
+  }
+  
+  // 1초 쉼
+  delay(1000); 
+}
