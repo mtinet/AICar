@@ -1,7 +1,7 @@
 /* 
 아두이노 UNO - 모터 드라이버(DM322E)
-         p3 - PUL
-         p2 - DIR
+         p3 - PUL(펄스)
+         p2 - DIR(디렉션)
             - OPTO
          5V - ENA
 
