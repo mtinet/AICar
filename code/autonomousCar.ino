@@ -5,24 +5,18 @@
          p4 - DIR(디렉션)  
             - OPTO  
          5V - ENA  
-
 모터 드라이버 - 스텝모터(2번, 5번 미사용)  
          A+ - 모터 결선 좌측 1번째  
          A- - 모터 결선 좌측 3번째  
          B+ - 모터 결선 좌측 4번째  
          B- - 모터 결선 좌측 6번째  
-
 모터 드라이버의 점퍼를 조정해 전류를 제어할 수 있음  
-
 모터는 K6G50C 1:50 기어박스가 포함되어 있음  
-
 현재 세팅은 점퍼 스위치 세팅 : 111111 (피크 전류 1A, RMS 0.71A, 400pulse/rev)  
-
 - 통신 :  
 아두이노 UNO - 블루투스 모듈(HC-06)  
          p2 - TXD  
          p3 - RXD  
-
 - 구동 :  
 아두이노 UNO - 모터 드라이버  
 PWM출력(p11) - PWM입력(페달)  
@@ -34,45 +28,57 @@ PWM출력(p11) - PWM입력(페달)
 
 SoftwareSerial mySerial(2, 3); // RX, TX
 
-const int dirPinLR = 4;  // 좌우 회전
+// 스텝 모터 제어
+const int dirPinLR = 6;  // 좌우 회전
 const int stepPin = 5; // 스텝 펄스
-const int dirState = 0; // 조향 방향 상태 
- 
+const int enA = 4;  // 구동 여부 결정
+
 const int STEPS_PER_REV = 400; // 모터 1회전 
 
-const int FB = 12; // 전진, 후진
+// 드라이브 모터 제어
+const int FB = 10; // 전진, 후진
 const int PWM = 11; // 모터 회전 속도
 
 const int valocity = 100;
 
 void setup() {
-  Serial.begin(9600);
-  bluetooth.begin(9600);              // 블루투스 통신 시작
+  //통신 설정
+  Serial.begin(9600); // 시리얼 통신
+  mySerial.begin(9600); // 블루투스 통신             
 
+  // 스텝모터 핀 모드 설정
   pinMode(dirPinLR,OUTPUT);
   pinMode(stepPin,OUTPUT); 
+  pinMode(enA, OUTPUT);
+  digitalWrite(enA, HIGH);
+
+  // 드라이브모터 핀 모드 설정
   pinMode(FB,OUTPUT);
   pinMode(PWM,OUTPUT); 
   
 }
 
 void loop() {
-  if( bluetooth.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    char cmd = bluetooth.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
-    if ( cmd == 'q' ){               // 만약 'cmd' 변수의 데이터가 q이면
-      FL();
-    } else if ( cmd == 'w') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
-      FF();
-    } else if ( cmd == 'e' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
-      FR();
+  if( Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    char cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+    if ( cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
+      forward();
+    } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
+      backward();
+    } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      right();
+    } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      left();
+    } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면
+      motorStop();
     }
   }
 }
 
 
 
-void FR() {
-  // 모터가 '시계방향'으로 회전하도록 신호부여
+void left() {
+  // 조향 모터가 '반시계방향'으로 회전하도록 신호부여
   digitalWrite(dirPinLR,HIGH); 
   
   // 500마이크로초 주기로 모터 축이 5회전하는 코드
@@ -80,91 +86,43 @@ void FR() {
   // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
   for(int x = 0; x < STEPS_PER_REV*5; x++) {
     digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(500); 
+    delayMicroseconds(200); 
     digitalWrite(stepPin,LOW); 
-    delayMicroseconds(500); 
-    
-    digitalWrite(FB,HIGH); 
-    analogWrite(PWM, valocity);
-    delay(100);
+    delayMicroseconds(200); 
   }
-  dirState = 1;
 }
 
-void FL() {
-  // 모터가 '시계방향'으로 회전하도록 신호부여
+void right() {
+  // 조향 모터가 '시계방향'으로 회전하도록 신호부여
   digitalWrite(dirPinLR,LOW); 
-  
-  // 500마이크로초 주기로 모터 축이 5회전하는 코드
-  // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
-  // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
+
   for(int x = 0; x < STEPS_PER_REV*5; x++) {
     digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(500); 
+    delayMicroseconds(200); 
     digitalWrite(stepPin,LOW); 
-    delayMicroseconds(500); 
-    
-    digitalWrite(FB,HIGH); 
-    analogWrite(PWM, valocity);
-    delay(100);
+    delayMicroseconds(200); 
   }
-  dirState = -1;
 }
 
-void FF() {
-  if (dirState == 1) {
-    // 모터가 '시계방향'으로 회전하도록 신호부여
-    digitalWrite(dirPinLR,LOW); 
-  
-    // 500마이크로초 주기로 모터 축이 5회전하는 코드
-    // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
-    // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
-    for(int x = 0; x < STEPS_PER_REV*5; x++) {
-      digitalWrite(stepPin,HIGH); 
-      delayMicroseconds(500); 
-      digitalWrite(stepPin,LOW); 
-      delayMicroseconds(500); 
-      
-      digitalWrite(FB,HIGH); 
-      analogWrite(PWM, valocity);
-      delay(100);
-    }
-  }
-  else if (dirState == 0) {
-    // 모터가 '시계방향'으로 회전하도록 신호부여
-    digitalWrite(dirPinLR,LOW); 
-  
-    // 500마이크로초 주기로 모터 축이 5회전하는 코드
-    // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
-    // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
-    for(int x = 0; x < STEPS_PER_REV*5; x++) {
-      digitalWrite(stepPin,LOW); 
-      delayMicroseconds(500); 
-      digitalWrite(stepPin,LOW); 
-      delayMicroseconds(500); 
-      
-      digitalWrite(FB,HIGH); 
-      analogWrite(PWM, valocity);
-      delay(100);
-    }
-  }
-   else if (dirState == -1) {
-    // 모터가 '시계방향'으로 회전하도록 신호부여
-    digitalWrite(dirPinLR,HIGH); 
-  
-    // 500마이크로초 주기로 모터 축이 5회전하는 코드
-    // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
-    // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
-    for(int x = 0; x < STEPS_PER_REV*5; x++) {
-      digitalWrite(stepPin,HIGH); 
-      delayMicroseconds(500); 
-      digitalWrite(stepPin,LOW); 
-      delayMicroseconds(500); 
-      
-      digitalWrite(FB,HIGH); 
-      analogWrite(PWM, valocity);
-      delay(100);
-    }
-  }
-  dirState == 0;
+void forward() {
+  //드라이브 모터가 앞으로 회전하도록 신호부여
+  digitalWrite(FB,HIGH); 
+  analogWrite(PWM, valocity);
+  delay(100);
+  Serial.println("forward");
+}
+
+void motorStop() {
+  digitalWrite(FB,HIGH); 
+  analogWrite(PWM, 0);
+  delay(100);
+  Serial.println("motorStop");
+}
+
+void backward() {
+  ////드라이브 모터가 뒤로 회전하도록 신호부여
+  digitalWrite(FB,LOW); 
+  analogWrite(PWM, valocity);
+  delay(100);
+  Serial.println("backward");
 }
