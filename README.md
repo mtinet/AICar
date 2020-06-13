@@ -19,3 +19,4 @@
 
 ### 앱인벤터  
 * [앱인벤터 코드 작성 참고자료](http://blog.naver.com/PostView.nhn?blogId=kids_power&logNo=221368450791&parentCategoryNo=&categoryNo=42&viewDate=&isShowPopularPosts=true&from=search)  
+* [앱인벤터, 아두이노 통신](http://sanguru.me/arduino009/)  
