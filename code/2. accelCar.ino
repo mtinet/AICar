@@ -40,7 +40,12 @@ const int PWM = 11; // 모터 회전 속도
 
 // 상태 확인
 int valocity = 0; // 속도 초기화
-bool FBstate = 1; // 전진
+bool FBstate = 1; // 전진, 후진
+
+// 조향 한계점 초기화
+int leftLimit = 0;
+int center = 2000;
+int rightLimit = 0;
 
 // 블루투스를 통해 들어온 값을 parseInt 함수를 사용해 x, y 값에 넣고, 이 값을 이용해 자동차를 제어함
 int x = 0;
@@ -60,6 +65,10 @@ void setup() {
   pinMode(FB,OUTPUT);
   pinMode(PWM,OUTPUT); 
 
+  //조향 한계 설정
+  leftLimit = center - STEPS_PER_REV*5;
+  rightLimit = center + STEPS_PER_REV*5;
+  
   // 오프닝
   Serial.println("Now Start Receive Data by parseInt..."); 
 }
@@ -83,7 +92,6 @@ void serialEvent(){
 }
 
 void moveCar(int x, int y) {
-  
   // 전진, 후진 제어
   if (valocity == 0) {
     if ( y < 13) {
@@ -95,7 +103,7 @@ void moveCar(int x, int y) {
       FBstate = LOW;
       valocity = valocity + 10;
     }
-    Serial.println("  stop");
+    Serial.print("  stop");
     
   } else {
     if (FBstate == HIGH) {
@@ -105,20 +113,20 @@ void moveCar(int x, int y) {
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    forward");
-        Serial.println("  acceleration");
+        Serial.print("  acceleration");
       } else if ( y < 17) {
         valocity = constrain(valocity, 0, 255);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    forward");
-        Serial.println("  stay valocity");
+        Serial.print("  stay valocity");
       } else {
         valocity = valocity - 10;
         valocity = constrain(valocity, 0, 255);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    forward");
-        Serial.println("  deceleration");
+        Serial.print("  deceleration");
       }
     }
     if (FBstate == LOW) {
@@ -128,51 +136,60 @@ void moveCar(int x, int y) {
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    backward");
-        Serial.println("  deceleration");
+        Serial.print("  deceleration");
       } else if ( y < 17) {
         valocity = constrain(valocity, 0, 255);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    backward");
-        Serial.println("  stay valocity");
+        Serial.print("  stay valocity");
       } else {
         valocity = valocity + 10;
         valocity = constrain(valocity, 0, 255);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    backward");
-        Serial.println("  acceleration");
+        Serial.print("  acceleration");
       }
     }
   }
-  
   analogWrite(PWM, valocity);
   delay(100);
-}
 
-void left() {
-  // 조향 모터가 '반시계방향'으로 회전하도록 신호부여
-  digitalWrite(dirPinLR,HIGH); 
-  
-  // 500마이크로초 주기로 모터 축이 5회전하는 코드
-  // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
-  // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
-  for(int x = 0; x < STEPS_PER_REV*5; x++) {
+  // 방향제어
+  if (x < 7) {
+    // 조향 모터가 '시계방향'으로 회전하도록 신호부여
+    digitalWrite(dirPinLR,LOW); 
+    
+    // 500마이크로초 주기로 모터 축이 5회전하는 코드
+    // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
+    // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
     digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(200); 
+    delayMicroseconds(50); 
     digitalWrite(stepPin,LOW); 
-    delayMicroseconds(200); 
-  }
-}
+    delayMicroseconds(50); 
 
-void right() {
-  // 조향 모터가 '시계방향'으로 회전하도록 신호부여
-  digitalWrite(dirPinLR,LOW); 
-
-  for(int x = 0; x < STEPS_PER_REV*5; x++) {
+    Serial.println("     right");
+  } else if (x < 13) {
+    // 스텝퍼모터 정지
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(50); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(50); 
+    
+    Serial.println("     stay direction");
+    }else {
+    // 조향 모터가 '시계방향'으로 회전하도록 신호부여
+    digitalWrite(dirPinLR,HIGH); 
+    
+    // 500마이크로초 주기로 모터 축이 5회전하는 코드
+    // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
+    // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
     digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(200); 
+    delayMicroseconds(50); 
     digitalWrite(stepPin,LOW); 
-    delayMicroseconds(200); 
-  }
+    delayMicroseconds(50); 
+    
+    Serial.println("     left");
+    }
 }
