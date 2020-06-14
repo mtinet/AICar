@@ -1,35 +1,28 @@
-#include <SoftwareSerial.h>
+// 이 프로그램을 업로드 할 때는 반드시 블루투스 모듈의 tx, rx핀을 제거하고 진행하세요.
+// 업로드가 완료되면,
+// 블루투스 모듈의 tx는 아두이노 0번 핀에 꽂으세요.
+// 블루투스 모듈의 rx는 아두이노 1번 핀에 꽂으세요.
 
-SoftwareSerial mySerial(2, 3); // RX, TX
-
-String readString;
+int x = 0;
+int y = 0;
 
 void setup() {
-  //통신 설정
-  Serial.begin(9600); // 시리얼 통신
-  mySerial.begin(9600); // 블루투스 통신      
-  Serial.println("serial-delimit-21"); // so I can keep track of what is loaded
+  Serial.begin(9600); // 시리얼 통신   
+  Serial.println("Now Start Receive Data by parseInt..."); 
 }
 
 void loop() {
-
-  //expect a string like wer,qwe rty,123 456,hyre kjhg,
-  //or like hello world,who are you?,bye!,
-  while (mySerial.available()) {
-    delay(10);  //small delay to allow input buffer to fill
-
-    char c = mySerial.read();  //gets one byte from serial buffer
-    if (c == '\n') {
-      break;
-    }  //breaks out of capture loop to print readstring
-    readString += c;
-  } //makes the string readString 
-
-  if (readString.length() >0) {
-    Serial.println(readString); //prints string to serial port out
-
-    readString=""; //clears variable for new input
-  }
-
-  Serial.println(readString);
 }
+
+void serialEvent(){
+  int x = Serial.parseInt();
+  int y = Serial.parseInt();
+    
+  if(Serial.read() == '\n'){
+    Serial.print(x);
+    Serial.print(" ");
+    Serial.println(y);
+  }
+}
+
+    
