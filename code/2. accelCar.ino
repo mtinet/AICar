@@ -13,14 +13,12 @@
 모터 드라이버의 점퍼를 조정해 전류를 제어할 수 있음  
 모터는 K6G50C 1:50 기어박스가 포함되어 있음  
 현재 세팅은 점퍼 스위치 세팅 : 111111 (피크 전류 1A, RMS 0.71A, 400pulse/rev)  
-
 - 통신 :  
 프로그램 업로드 할 때는 반드시 블루투스 모듈을 빼놓고 해야 오류가 발생하지 않음 
 softwareSerial 라이브러리에는 parseInt 함수가 없기 때문에 하드웨어 시리얼 통신인 0번, 1번 핀을 사용해야 하기 때문
 아두이노 UNO - 블루투스 모듈(HC-06)  
     0번(RX) - TXD  
     1번(TX) - RXD  
-
 - 구동 :  
 아두이노 UNO - 모터 드라이버  
 PWM출력(p11) - PWM입력(페달)  
@@ -96,11 +94,15 @@ void moveCar(int x, int y) {
   if (valocity == 0) {
     if ( y < 13) {
       FBstate = HIGH;
+      digitalWrite(FB,HIGH);
       valocity = valocity + 10;
     } else if ( y < 17) {
       FBstate = HIGH;
+      digitalWrite(FB,HIGH);
+      delay(100);
     } else {
       FBstate = LOW;
+      digitalWrite(FB,LOW);
       valocity = valocity + 10;
     }
     Serial.print("  stop");
@@ -109,20 +111,20 @@ void moveCar(int x, int y) {
     if (FBstate == HIGH) {
       if ( y < 13) {
         valocity = valocity + 10;
-        valocity = constrain(valocity, 0, 255);
+        valocity = constrain(valocity, 0, 200);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    forward");
         Serial.print("  acceleration");
       } else if ( y < 17) {
-        valocity = constrain(valocity, 0, 255);
+        valocity = constrain(valocity, 0, 200);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    forward");
         Serial.print("  stay valocity");
       } else {
         valocity = valocity - 10;
-        valocity = constrain(valocity, 0, 255);
+        valocity = constrain(valocity, 0, 200);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    forward");
@@ -132,20 +134,20 @@ void moveCar(int x, int y) {
     if (FBstate == LOW) {
       if ( y < 13) {
         valocity = valocity - 10;
-        valocity = constrain(valocity, 0, 255);
+        valocity = constrain(valocity, 0, 200);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    backward");
         Serial.print("  deceleration");
       } else if ( y < 17) {
-        valocity = constrain(valocity, 0, 255);
+        valocity = constrain(valocity, 0, 200);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    backward");
         Serial.print("  stay valocity");
       } else {
         valocity = valocity + 10;
-        valocity = constrain(valocity, 0, 255);
+        valocity = constrain(valocity, 0, 200);
         Serial.print("valocity : ");
         Serial.print(valocity);
         Serial.print("    backward");
@@ -159,37 +161,39 @@ void moveCar(int x, int y) {
   // 방향제어
   if (x < 7) {
     // 조향 모터가 '시계방향'으로 회전하도록 신호부여
-    digitalWrite(dirPinLR,LOW); 
-    
-    // 500마이크로초 주기로 모터 축이 5회전하는 코드
-    // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
-    // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
-    digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(50); 
-    digitalWrite(stepPin,LOW); 
-    delayMicroseconds(50); 
-
-    Serial.println("     right");
-  } else if (x < 13) {
-    // 스텝퍼모터 정지
-    digitalWrite(stepPin,LOW); 
-    delayMicroseconds(50); 
-    digitalWrite(stepPin,LOW); 
-    delayMicroseconds(50); 
-    
-    Serial.println("     stay direction");
-    }else {
-    // 조향 모터가 '시계방향'으로 회전하도록 신호부여
     digitalWrite(dirPinLR,HIGH); 
     
     // 500마이크로초 주기로 모터 축이 5회전하는 코드
     // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
     // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
-    digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(50); 
+    for(int x = 0; x < STEPS_PER_REV/4; x++) {
+      digitalWrite(stepPin,HIGH); 
+      delayMicroseconds(100); 
+      digitalWrite(stepPin,LOW); 
+      delayMicroseconds(100); 
+    } 
+    Serial.println("     right");
+  } else if (x < 13) {
+    // 스텝퍼모터 정지
     digitalWrite(stepPin,LOW); 
-    delayMicroseconds(50); 
+    delayMicroseconds(100); 
+    digitalWrite(stepPin,LOW); 
+    delayMicroseconds(100); 
     
+    Serial.println("     stay direction");
+    }else {
+    // 조향 모터가 '시계방향'으로 회전하도록 신호부여
+    digitalWrite(dirPinLR,LOW); 
+    
+    // 500마이크로초 주기로 모터 축이 5회전하는 코드
+    // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
+    // 따라서, 모터가 5회전하면 바퀴가 36도 회전함
+    for(int x = 0; x < STEPS_PER_REV/4; x++) {
+      digitalWrite(stepPin,HIGH); 
+      delayMicroseconds(100); 
+      digitalWrite(stepPin,LOW); 
+      delayMicroseconds(100); 
+    }
     Serial.println("     left");
     }
 }
