@@ -22,3 +22,4 @@
 * [앱인벤터, 아두이노 통신](http://sanguru.me/arduino009/)  
 * [이미지 분류 학습](https://classifier.appinventor.mit.edu/)  
 * [익스텐션 다운로드](https://mit-cml.github.io/extensions/)  
+* [딕셔너리 결과물 보는 방법](http://ai2.appinventor.mit.edu/reference/blocks/dictionaries.html#get-value-at-key-path)  
