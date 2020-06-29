@@ -107,8 +107,10 @@ void right() {
 void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
   digitalWrite(FB,HIGH); 
-  analogWrite(PWM, valocity);
-  delay(100);
+  for (int i = 0; i < valocity; i = i + 10) {
+    analogWrite(PWM, i);
+    delay(100);
+  }
   Serial.println("forward");
 }
 
@@ -122,7 +124,9 @@ void motorStop() {
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
   digitalWrite(FB,LOW); 
-  analogWrite(PWM, valocity);
-  delay(100);
+  for (int i = 0; i < valocity; i = i + 10) {
+    analogWrite(PWM, i);
+    delay(100);
+  }
   Serial.println("backward");
 }
