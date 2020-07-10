@@ -40,6 +40,7 @@ int rotateLimit = 4;
 // 드라이브 모터 제어
 const int FB = 10; // 전진, 후진
 const int PWM = 11; // 모터 회전 속도
+const int enB= 12;  // 구동 여부 결정
 
 const int valocity = 100;
 
@@ -53,6 +54,8 @@ void setup() {
   pinMode(stepPin,OUTPUT); 
   pinMode(enA, OUTPUT);
   digitalWrite(enA, HIGH);
+  pinMode(enB, OUTPUT);
+  digitalWrite(enB, HIGH);
 
   // 드라이브모터 핀 모드 설정
   pinMode(FB,OUTPUT);
