@@ -38,8 +38,8 @@ const int STEPS_PER_REV = 200; // 모터 1회전
 int rotateLimit = 4;
 
 // 드라이브 모터 제어
-const int FB = 10; // 전진, 후진
-const int PWM = 11; // 모터 회전 속도
+const int PWM1 = 10; // 전진, 후진
+const int PWM2 = 11; // 모터 회전 속도
 const int enB= 12;  // 구동 여부 결정
 
 const int valocity = 100;
@@ -55,11 +55,11 @@ void setup() {
   pinMode(enA, OUTPUT);
   digitalWrite(enA, HIGH);
   pinMode(enB, OUTPUT);
-  digitalWrite(enB, HIGH);
+  digitalWrite(enB, LOW);
 
   // 드라이브모터 핀 모드 설정
-  pinMode(FB,OUTPUT);
-  pinMode(PWM,OUTPUT); 
+  pinMode(PWM1,OUTPUT);
+  pinMode(PWM2,OUTPUT); 
   
 }
 
@@ -123,26 +123,26 @@ void right() {
 
 void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
-  digitalWrite(FB,HIGH); 
+  analogWrite(PWM1,0); 
   for (int i = 0; i < valocity; i = i + 10) {
-    analogWrite(PWM, i);
+    analogWrite(PWM2, i);
     delay(100);
   }
   Serial.println("forward");
 }
 
 void motorStop() {
-  digitalWrite(FB,HIGH); 
-  analogWrite(PWM, 0);
+  analogWrite(PWM1,255); 
+  analogWrite(PWM2, 255);
   delay(100);
   Serial.println("motorStop");
 }
 
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
-  digitalWrite(FB,LOW); 
+  analogWrite(PWM2,0); 
   for (int i = 0; i < valocity; i = i + 10) {
-    analogWrite(PWM, i);
+    analogWrite(PWM1, i);
     delay(100);
   }
   Serial.println("backward");
