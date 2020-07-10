@@ -82,8 +82,6 @@ void loop() {
 void left() {
   // 조향 모터가 '반시계방향'으로 회전하도록 신호부여
   digitalWrite(dirPinLR,HIGH); 
-
-  rotateLimit = rotateLimit - 1;
   
   if (rotateLimit > 0) {
     // 500마이크로초 주기로 모터 축이 5회전하는 코드
@@ -95,6 +93,7 @@ void left() {
       digitalWrite(stepPin,LOW); 
       delayMicroseconds(1000); 
     }
+    rotateLimit = rotateLimit - 1;
   } else {
     rotateLimit = 0;
   }
@@ -104,18 +103,17 @@ void left() {
 void right() {
   // 조향 모터가 '시계방향'으로 회전하도록 신호부여
   digitalWrite(dirPinLR,LOW); 
-
-  rotateLimit = rotateLimit + 1;
   
-  if (rotateLimit < 8) {
+  if (rotateLimit < 7) {
     for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
       digitalWrite(stepPin,HIGH); 
       delayMicroseconds(1000); 
       digitalWrite(stepPin,LOW); 
       delayMicroseconds(1000); 
     }
+    rotateLimit = rotateLimit + 1;
   } else {
-    rotateLimit = 8;
+    rotateLimit = 7;
   }
   Serial.println(rotateLimit);
 }
