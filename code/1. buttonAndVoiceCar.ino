@@ -38,8 +38,8 @@ const int STEPS_PER_REV = 200; // 모터 1회전
 int rotateLimit = 4;
 
 // 드라이브 모터 제어
-const int PWM1 = 10; // 전진, 후진
-const int PWM2 = 11; // 모터 회전 속도
+const int FB = 10; // 전진, 후진
+const int PWM = 11; // 모터 회전 속도
 const int enB= 12;  // 구동 여부 결정
 
 const int valocity = 100;
@@ -54,18 +54,19 @@ void setup() {
   pinMode(stepPin,OUTPUT); 
   pinMode(enA, OUTPUT);
   digitalWrite(enA, HIGH);
-  pinMode(enB, OUTPUT);
-  digitalWrite(enB, LOW);
+
 
   // 드라이브모터 핀 모드 설정
-  pinMode(PWM1,OUTPUT);
-  pinMode(PWM2,OUTPUT); 
+  pinMode(FB,OUTPUT);
+  pinMode(PWM,OUTPUT); 
+  pinMode(enB, OUTPUT);
+  digitalWrite(enB, HIGH);
   
 }
 
 void loop() {
-  if( Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    char cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if( mySerial.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    char cmd = mySerial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
     if ( cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
       forward();
     } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
@@ -123,26 +124,26 @@ void right() {
 
 void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
-  analogWrite(PWM1,0); 
+  analogWrite(FB,255); 
   for (int i = 0; i < valocity; i = i + 10) {
-    analogWrite(PWM2, i);
+    analogWrite(PWM, i);
     delay(100);
   }
   Serial.println("forward");
 }
 
 void motorStop() {
-  analogWrite(PWM1,255); 
-  analogWrite(PWM2, 255);
+  analogWrite(FB,255); 
+  analogWrite(PWM, 0);
   delay(100);
   Serial.println("motorStop");
 }
 
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
-  analogWrite(PWM2,0); 
+  analogWrite(FB,0); 
   for (int i = 0; i < valocity; i = i + 10) {
-    analogWrite(PWM1, i);
+    analogWrite(PWM, i);
     delay(100);
   }
   Serial.println("backward");
