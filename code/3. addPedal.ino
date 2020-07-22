@@ -53,8 +53,10 @@ const int enB= 12;  // 구동 여부 결정
 const int valocity = 100;
 
 // 페달 제어
-boolean pedalF = 7;
-boolean pedalB = 8;
+int pedalF = 7;
+boolean pedalFVal = 0;
+int pedalB = 8;
+boolean pedalBVal = 0;
 const int pedalSensor = A0;
 int pedalVal = 0;
 
@@ -117,6 +119,9 @@ void loop() {
     
     //  modestate가 1이면 페달제어 모드로 수행
     if(modeState == 1) {       
+      pedalFVal = digitalRead(pedalF);
+      pedalBVal = digitalRead(pedalB);
+  
       pedalVal = analogRead(pedalSensor);
       Serial.println(pedalVal);
       
