@@ -30,6 +30,7 @@ enB(p12) - 구동 여부 결정
      A0 - 노랑
      7  - 스위치-전진
      8  - 스위치-후진
+     9  - ground
 */
 
 #include <SoftwareSerial.h>
