@@ -83,16 +83,21 @@ void setup() {
   // 페달모드 전진 후진 신호
   pinMode(pedalF, INPUT_PULLUP);
   pinMode(pedalB, INPUT_PULLUP);
+
+  Serial.println("AI Go-Kart is Ready!");
   
 }
 
 void loop() {
-  if (mySerial.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    char cmd = mySerial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    char cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
     // cmd 변수의 데이터가 m이면 modeState의 상태를 바꿈
     if (cmd == 'm') {
-      modeState != modeState;
+      modeState = !modeState;
+      Serial.println("input 'm'");
+      Serial.print("mode is : ");
+      Serial.println(modeState);
     }
     
     // modestate가 0이면 앱제어 모드로 수행
@@ -111,8 +116,9 @@ void loop() {
     } 
     
     //  modestate가 1이면 페달제어 모드로 수행
-    else if(modeState == 1) {       
+    if(modeState == 1) {       
       pedalVal = analogRead(pedalSensor);
+      Serial.println(pedalVal);
       
       if (pedalF == 1 && pedalB == 0) {
         analogWrite(FB,255); 
