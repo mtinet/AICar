@@ -101,36 +101,58 @@ void loop() {
     pedalBVal = digitalRead(pedalB);
 
     pedalVal = analogRead(pedalSensor);
-    Serial.println(pedalVal);
+    pedalVal = map(pedalVal, 180, 850, 0, 255);
+    pedalVal = constrain(pedalVal, 0, 255);
+
+    Serial.print(pedalFVal);
+    Serial.print("  ");
+    Serial.print(pedalBVal);
+    Serial.print("  ");
+    Serial.print(pedalVal);
+    Serial.print("  ");
     
-    if (pedalF == 1 && pedalB == 0) {
+    if (pedalFVal == 1 && pedalBVal == 0) {
       digitalWrite(in1,HIGH); 
       digitalWrite(in2,LOW); 
-      analogWrite(PWM, pedalVal/4);
-    } else if (pedalF == 0 && pedalB == 1) {
-      digitalWrite(in1,LOW); 
-      digitalWrite(in2,LOW); 
-      analogWrite(PWM, pedalVal/4);
-    } else {
+      analogWrite(PWM, pedalVal);
+      Serial.println("FFFF");
+    } else if (pedalFVal == 0 && pedalBVal == 1) {
       digitalWrite(in1,LOW); 
       digitalWrite(in2,HIGH); 
-      analogWrite(FB,255); 
+      analogWrite(PWM, pedalVal);
+      Serial.println("RRRR");
+    } else {
+      digitalWrite(in1,LOW); 
+      digitalWrite(in2,LOW); 
       analogWrite(PWM, 0);
+      Serial.println("SSSS");
     }
   }
          
-  if( mySerial.available() ){        // 블루투스 통신에 데이터가 있을 경우
+  if (mySerial.available() ){        // 블루투스 통신에 데이터가 있을 경우
     char cmd = mySerial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
-    if ( cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
-      forward();
-    } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
-      backward();
-    } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
-      right();
-    } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
-      left();
-    } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면
-      motorStop();
+  
+    // cmd 변수의 데이터가 m이면 modeState의 상태를 바꿈
+    if (cmd == 'm') {
+      modeState = !modeState;
+      Serial.println("input 'm'");
+      Serial.print("mode is : ");
+      Serial.println(modeState);
+    }
+    
+    // modestate가 0이면 앱제어 모드로 수행
+    if (modeState == 0) {
+      if ( cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
+        forward();
+      } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
+        backward();
+      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+        right();
+      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+        left();
+      } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면
+        motorStop();
+      }
     }
   }
 }
