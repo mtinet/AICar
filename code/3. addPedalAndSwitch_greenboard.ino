@@ -55,11 +55,14 @@ const int valocity = 100;
 // 페달 제어
 int pedalF = 7;
 boolean pedalFVal = 0;
+
 int pedalB = 8;
 boolean pedalBVal = 0;
+
 const int pedalSensor = A0;
 int pedalVal = 0;
 
+const int ground = 9;
 
 // 수동 모드, 앱 제어모드 변경, 0은 앱제어모드, 1은 수동 모드
 boolean modeState = 0;
@@ -85,12 +88,34 @@ void setup() {
   // 페달모드 전진 후진 신호
   pinMode(pedalF, INPUT_PULLUP);
   pinMode(pedalB, INPUT_PULLUP);
+  pinMode(ground, OUTPUT);
+  digitalWrite(ground, LOW);
 
   Serial.println("AI Go-Kart is Ready!");
   
 }
 
 void loop() {
+  //  modestate가 1이면 페달제어 모드로 수행
+  if(modeState == 1) {       
+    pedalFVal = digitalRead(pedalF);
+    pedalBVal = digitalRead(pedalB);
+
+    pedalVal = analogRead(pedalSensor);
+    Serial.println(pedalVal);
+    
+    if (pedalF == 1 && pedalB == 0) {
+      analogWrite(FB,255); 
+      analogWrite(PWM, pedalVal/4);
+    } else if (pedalF == 0 && pedalB == 1) {
+      analogWrite(FB,0); 
+      analogWrite(PWM, pedalVal/4);
+    } else {
+      analogWrite(FB,255); 
+      analogWrite(PWM, 0);
+    }
+  }
+         
   if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
     char cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
@@ -114,26 +139,6 @@ void loop() {
         left();
       } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면
         motorStop();
-      }
-    } 
-    
-    //  modestate가 1이면 페달제어 모드로 수행
-    if(modeState == 1) {       
-      pedalFVal = digitalRead(pedalF);
-      pedalBVal = digitalRead(pedalB);
-  
-      pedalVal = analogRead(pedalSensor);
-      Serial.println(pedalVal);
-      
-      if (pedalF == 1 && pedalB == 0) {
-        analogWrite(FB,255); 
-        analogWrite(PWM, pedalVal/4);
-      } else if (pedalF == 0 && pedalB == 1) {
-        analogWrite(FB,0); 
-        analogWrite(PWM, pedalVal/4);
-      } else {
-        analogWrite(FB,255); 
-        analogWrite(PWM, 0);
       }
     }
   }
