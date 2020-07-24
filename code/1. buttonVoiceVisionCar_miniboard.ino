@@ -66,6 +66,13 @@ const int ground = 9;
 // 수동 모드, 앱 제어모드 변경, 0은 앱제어모드, 1은 수동 모드
 boolean modeState = 1;
 
+// 페달 값
+int i = 0;
+
+// 입력 문자
+char cmd = "";
+char cmdM = "";
+
 void setup() {
   //통신 설정
   Serial.begin(9600); // 시리얼 통신
@@ -101,7 +108,7 @@ void loop() {
     pedalBVal = digitalRead(pedalB);
 
     pedalVal = analogRead(pedalSensor);
-    pedalVal = map(pedalVal, 180, 850, 0, 255);
+    pedalVal = map(pedalVal, 230, 850, 0, 255);
     pedalVal = constrain(pedalVal, 0, 255);
 
     Serial.print(pedalFVal);
@@ -110,6 +117,14 @@ void loop() {
     Serial.print("  ");
     Serial.print(pedalVal);
     Serial.print("  ");
+
+    if (pedalVal == 0) {
+      digitalWrite(in1,LOW); 
+      digitalWrite(in2,LOW);
+      
+      analogWrite(PWM, 0);
+      delay(100);
+    }
     
     if (pedalFVal == 1 && pedalBVal == 0) {
       digitalWrite(in1,HIGH); 
@@ -129,8 +144,8 @@ void loop() {
     }
   }
          
-  if (mySerial.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    char cmd = mySerial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
     // cmd 변수의 데이터가 m이면 modeState의 상태를 바꿈
     if (cmd == 'm') {
@@ -142,10 +157,23 @@ void loop() {
     
     // modestate가 0이면 앱제어 모드로 수행
     if (modeState == 0) {
-      if ( cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
-        forward();
+      if (cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
+        Serial.println(cmdM);
+        if(cmdM == 'w'){
+          forward();
+        } else {
+          i = 0;
+          forward();
+        }
+        cmdM = 'w';
       } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
-        backward();
+        if(cmdM == 'x') {
+          backward();
+        } else {
+          i = 0;
+          backward();
+        }
+        cmdM = 'x';
       } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
         right();
       } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
@@ -202,9 +230,13 @@ void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
   digitalWrite(in1,HIGH); 
   digitalWrite(in2,LOW); 
-  for (int i = 0; i < valocity; i = i + 10) {
-    analogWrite(PWM, i);
-    delay(100);
+  analogWrite(PWM, i);
+
+  if(i != valocity) {
+    for (i = 0; i < valocity; i = i + 10) {
+      analogWrite(PWM, i);
+      delay(100);
+    }
   }
   Serial.println("forward");
 }
@@ -222,9 +254,13 @@ void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
   digitalWrite(in1,LOW); 
   digitalWrite(in2,HIGH); 
-  for (int i = 0; i < valocity; i = i + 10) {
-    analogWrite(PWM, i);
-    delay(100);
+  analogWrite(PWM, i);
+  
+  if(i != valocity) {
+    for (i = 0; i < valocity; i = i + 10) {
+      analogWrite(PWM, i);
+      delay(100);
+    }
   }
   Serial.println("backward");
 }
