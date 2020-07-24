@@ -16,7 +16,7 @@
 ![](https://github.com/mtinet/AICar/blob/master/image/Slide3.jpg?raw=true)  
 
 ### 4. 스텝모터 테스트  
-* [코드 링크](https://github.com/mtinet/autonomousCar/blob/master/code/stepperMotor.ino)  
+* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/4.%20stepMotor.ino)  
 * 테스트 이미지  
 ![](https://github.com/mtinet/autonomousCar/blob/master/image/stepMotorCircuit.jpg?raw=true)  
 ![](https://github.com/mtinet/AICar/blob/master/image/Slide4.jpg?raw=true) 
