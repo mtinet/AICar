@@ -58,10 +58,10 @@ boolean pedalFVal = 0;
 int pedalB = 8;
 boolean pedalBVal = 0;
 
+const int ground = 9;
+
 const int pedalSensor = A0;
 int pedalVal = 0;
-
-const int ground = 9;
 
 // 수동 모드, 앱 제어모드 변경, 0은 앱제어모드, 1은 수동 모드
 boolean modeState = 1;
