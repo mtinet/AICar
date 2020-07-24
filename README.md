@@ -1,15 +1,39 @@
 # autonomousCar
 
-### 스텝모터 테스트  
+### 1. 페달 테스트  
+* [코드 링크]()  
+* 테스트 이미지  
+![]() 
+
+### 2. 전진, 후진 스위치 테스트  
+* [코드 링크]()  
+* 테스트 이미지  
+![]() 
+
+### 3. 블루투스 테스트  
+* [코드 링크]()  
+* 테스트 이미지  
+![]()  
+
+### 4. 스텝모터 테스트  
 * [코드 링크](https://github.com/mtinet/autonomousCar/blob/master/code/stepperMotor.ino)  
 * 테스트 이미지  
 ![](https://github.com/mtinet/autonomousCar/blob/master/image/stepMotorCircuit.jpg?raw=true)  
 
+### 5. DC모터 테스트  
+* [코드 링크]()  
+* 테스트 이미지  
+![]()  
 
-### 전체 테스트  
-* [코드 링크](https://github.com/mtinet/autonomousCar/blob/master/code/autonomousCar.ino)  
-* 테스트 회로도  
-![](https://github.com/mtinet/autonomousCar/blob/master/image/totalCircuit.png?raw=true)  
+### 6. 배터리 연결 및 비상정지 스위치 
+* [코드 링크]()  
+* 테스트 이미지  
+![]() 
+
+### 7. 전체 테스트  
+* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/1.%20buttonVoiceVisionCar_miniboard.ino)  
+![]()  
+
 
 
 ### 모터 드라이버 구입  
