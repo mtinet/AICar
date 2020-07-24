@@ -43,6 +43,7 @@
 ### 앱인벤터  
 * [이미지 분류 학습](https://classifier.appinventor.mit.edu/)  
 * [익스텐션 다운로드](https://mit-cml.github.io/extensions/)  
+* [Electric Bike/Scooter Foot Pedal Throttle Ebike Electric Tricycle Accelerator Pedal Speed Control Bicycle kit](https://www.aliexpress.com/item/32916923695.html?spm=a2g0o.cart.0.0.6cd43c00q48Iys&mp=1)  
 
 ### 참고자료  
 * [앱인벤터 코드 작성 참고자료](http://blog.naver.com/PostView.nhn?blogId=kids_power&logNo=221368450791&parentCategoryNo=&categoryNo=42&viewDate=&isShowPopularPosts=true&from=search)  
