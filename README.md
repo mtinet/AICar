@@ -6,7 +6,7 @@
 ![](https://github.com/mtinet/AICar/blob/master/image/Slide1.jpg?raw=true) 
 
 ### 2. 전진, 후진 스위치 테스트  
-* [코드 링크]()  
+* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/2.%20switch.ino)  
 * 테스트 이미지  
 ![](https://github.com/mtinet/AICar/blob/master/image/Slide2.jpg?raw=true) 
 
