@@ -1,7 +1,7 @@
 # autonomousCar
 
 ### 1. 페달 테스트  
-* [코드 링크]()  
+* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/1.%20pedal.ino)  
 * 테스트 이미지  
 ![](https://github.com/mtinet/AICar/blob/master/image/Slide1.jpg?raw=true) 
 
