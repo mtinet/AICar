@@ -11,7 +11,7 @@
 ![](https://github.com/mtinet/AICar/blob/master/image/Slide2.jpg?raw=true) 
 
 ### 3. 블루투스 테스트  
-* [코드 링크]()  
+* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/3.%20bluetooth.ino)  
 * 테스트 이미지  
 ![](https://github.com/mtinet/AICar/blob/master/image/Slide3.jpg?raw=true)  
 
