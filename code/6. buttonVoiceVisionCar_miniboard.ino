@@ -45,7 +45,7 @@ const int enA = 4;  // 구동 여부 결정
 const int stepPin = 5; // 스텝 펄스
 const int dirPinLR = 6;  // 좌우 회전
 
-const int STEPS_PER_REV = 200; // 모터 1회전 
+const int STEPS_PER_REV = 400; // 모터 1회전 
 
 int rotateLimit = 4;
 
