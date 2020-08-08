@@ -45,7 +45,7 @@ const int enA = 4;  // 구동 여부 결정
 const int stepPin = 5; // 스텝 펄스
 const int dirPinLR = 6;  // 좌우 회전
 
-const int STEPS_PER_REV = 400; // 모터 1회전 
+const int STEPS_PER_REV = 400; // 모터 1회전, TB6600 스텝 모터 드라이버의 점퍼는 400pulse/rev, 1.5A로 세팅할 것  
 
 int rotateLimit = 4;
 
