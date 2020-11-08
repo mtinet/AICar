@@ -103,53 +103,19 @@ void setup() {
   Serial.println("AI Go-Kart is Ready!");
 }
 
-void loop() {
+void loop() {9i
+
   //  modestate가 1이면 페달제어 모드로 수행
-  if(modeState == 1) {       
-    // 전진, 후진 스위치 값 저장
-    pedalFVal = digitalRead(pedalF);
-    pedalBVal = digitalRead(pedalB);
-
-    // 페달값 센싱-매핑-한계범위설정
-    pedalVal = analogRead(pedalSensor);
-    pedalVal = map(pedalVal, 230, 850, 0, 255);
-    pedalVal = constrain(pedalVal, 0, 255);
-
-    // 페달 값 변화 시리얼 모니터링
-    Serial.print(pedalFVal);
-    Serial.print("  ");
-    Serial.print(pedalBVal);
-    Serial.print("  ");
-    Serial.print(pedalVal);
-    Serial.print("  ");
-
-    // 페달 신호가 0이면 브레이킹
-    if (pedalVal == 0) {
-      digitalWrite(in1,LOW); 
-      digitalWrite(in2,LOW);
-      
-      analogWrite(PWM, 0);
-      delay(100);
-    }
-
-    // 전진, 후진 스위치 값에 따른 페달 동작
-    if (pedalFVal == 1 && pedalBVal == 0) {
-      digitalWrite(in1,HIGH); 
-      digitalWrite(in2,LOW); 
-      analogWrite(PWM, pedalVal);
-      Serial.println("FFFF");
-    } else if (pedalFVal == 0 && pedalBVal == 1) {
-      digitalWrite(in1,LOW); 
-      digitalWrite(in2,HIGH); 
-      analogWrite(PWM, pedalVal);
-      Serial.println("RRRR");
-    } else {
-      digitalWrite(in1,LOW); 
-      digitalWrite(in2,LOW); 
-      analogWrite(PWM, 0);
-      Serial.println("SSSS");
-    }
+  if(modeState == 1) {  
+    Serial.print("Manual mode  ");  
+    viewData();
   }
+  if(modeState == 0) {  
+    Serial.print("Autonomous mode  ");  
+    viewData();
+  }
+
+
          
   if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
     cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
@@ -166,61 +132,14 @@ void loop() {
       Serial.println("input 'i'");
       Serial.println("the mode is : app control");
     }    
-    
-    // modestate가 0이면 앱제어 모드로 수행
-    if (modeState == 0) {
+ 
 
-      // 비전 인공지능 사용할 때도 엑셀을 사용할 수 있도록 수정함
-      // 전진, 후진 스위치 값 저장
-      pedalFVal = digitalRead(pedalF);
-      pedalBVal = digitalRead(pedalB);
-  
-      // 페달값 센싱-매핑-한계범위설정
-      pedalVal = analogRead(pedalSensor);
-      pedalVal = map(pedalVal, 230, 850, 0, 255);
-      pedalVal = constrain(pedalVal, 0, 255);
-  
-      // 페달 값 변화 시리얼 모니터링
-      Serial.print(pedalFVal);
-      Serial.print("  ");
-      Serial.print(pedalBVal);
-      Serial.print("  ");
-      Serial.print(pedalVal);
-      Serial.print("  ");
-  
-      // 페달 신호가 0이면 브레이킹
-      if (pedalVal == 0) {
-        digitalWrite(in1,LOW); 
-        digitalWrite(in2,LOW);
-        
-        analogWrite(PWM, 0);
-        delay(100);
-      }
-  
-      // 전진, 후진 스위치 값에 따른 페달 동작
-      if (pedalFVal == 1 && pedalBVal == 0) {
-        digitalWrite(in1,HIGH); 
-        digitalWrite(in2,LOW); 
-        analogWrite(PWM, pedalVal);
-        Serial.println("FFFF");
-      } else if (pedalFVal == 0 && pedalBVal == 1) {
-        digitalWrite(in1,LOW); 
-        digitalWrite(in2,HIGH); 
-        analogWrite(PWM, pedalVal);
-        Serial.println("RRRR");
-      } else {
-        digitalWrite(in1,LOW); 
-        digitalWrite(in2,LOW); 
-        analogWrite(PWM, 0);
-        Serial.println("SSSS");
-      }
-
-      // 좌우 조향만 인공지능으로 할 때 주석해제, a는 좌회전, d는 우회전
-      if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면
-        right();
-      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면
-        left();
-      }
+    // 좌우 조향만 인공지능으로 할 때 주석해제, a는 좌회전, d는 우회전
+    if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면
+      right();
+    } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면
+      left();
+    }
 
       
 
@@ -250,7 +169,7 @@ void loop() {
 //        motorStop();
 //      }
     }
-  }
+  
 }
 
 
@@ -333,4 +252,51 @@ void backward() {
     }
   }
   Serial.println("backward");
+}
+
+void viewData() {
+
+  // 전진, 후진 스위치 값 저장
+  pedalFVal = digitalRead(pedalF);
+  pedalBVal = digitalRead(pedalB);
+
+  // 페달값 센싱-매핑-한계범위설정
+  pedalVal = analogRead(pedalSensor);
+  pedalVal = map(pedalVal, 230, 850, 0, 255);
+  pedalVal = constrain(pedalVal, 0, 255);
+
+  // 페달 값 변화 시리얼 모니터링
+  Serial.print(pedalFVal);
+  Serial.print("  ");
+  Serial.print(pedalBVal);
+  Serial.print("  ");
+  Serial.print(pedalVal);
+  Serial.print("  ");
+
+  // 페달 신호가 0이면 브레이킹
+  if (pedalVal == 0) {
+    digitalWrite(in1,LOW); 
+    digitalWrite(in2,LOW);
+    
+    analogWrite(PWM, 0);
+    delay(100);
+  }
+
+  // 전진, 후진 스위치 값에 따른 페달 동작
+  if (pedalFVal == 1 && pedalBVal == 0) {
+    digitalWrite(in1,HIGH); 
+    digitalWrite(in2,LOW); 
+    analogWrite(PWM, pedalVal);
+    Serial.println("FFFF");
+  } else if (pedalFVal == 0 && pedalBVal == 1) {
+    digitalWrite(in1,LOW); 
+    digitalWrite(in2,HIGH); 
+    analogWrite(PWM, pedalVal);
+    Serial.println("RRRR");
+  } else {
+    digitalWrite(in1,LOW); 
+    digitalWrite(in2,LOW); 
+    analogWrite(PWM, 0);
+    Serial.println("SSSS");
+  }
 }
