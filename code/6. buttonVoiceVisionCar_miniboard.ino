@@ -17,21 +17,17 @@
 모터 드라이버의 점퍼를 조정해 전류를 제어할 수 있음  
 모터는 K6G50C 1:50 기어박스가 포함되어 있음  
 현재 세팅은 점퍼 스위치 세팅 : 110010 (피크 전류 3.2A, RMS 3.0A, 200pulse/rev)  
-
 - 페달모드 :
 아두이노 - 페달
      A0 - 노랑
      7  - 스위치-전진
      8  - 스위치-후진
      9  - ground
-
 - 구동 :  
 아두이노 UNO - 모터 드라이버  
 전진후진(P10) - dir입력(모터 회전 방향)  
 PWM출력(p11) - PWM입력(파워)  
 enB(p12) - 구동 여부 결정
-
-
 - 5V 확인용 : p13
 */
 
@@ -45,7 +41,7 @@ const int enA = 4;  // 구동 여부 결정
 const int stepPin = 5; // 스텝 펄스
 const int dirPinLR = 6;  // 좌우 회전
 
-const int STEPS_PER_REV = 400; // 모터 1회전, TB6600 스텝 모터 드라이버의 점퍼는 400pulse/rev, 1.5A로 세팅할 것  
+const int STEPS_PER_REV = 1600; // 모터 1회전 
 
 int rotateLimit = 4;
 
@@ -155,8 +151,8 @@ void loop() {
     }
   }
          
-  if (mySerial.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    cmd = mySerial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
     // cmd 변수의 데이터가 m이면 수동모드로, i면 앱모드로 modeState 변수의 상태를 바꿈
     if (cmd == 'm') {
@@ -212,10 +208,11 @@ void left() {
     // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
     // 따라서, 모터가 1.5회전하면 바퀴가 10.8도 회전함
     for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
-      digitalWrite(stepPin,HIGH); 
-      delayMicroseconds(1000); 
-      digitalWrite(stepPin,LOW); 
-      delayMicroseconds(1000); 
+      digitalWrite(enA,HIGH);
+      digitalWrite(stepPin,HIGH);
+      delayMicroseconds(50);
+      digitalWrite(stepPin,LOW);
+      delayMicroseconds(50); 
     }
     rotateLimit = rotateLimit - 1;
   } else {
@@ -230,10 +227,11 @@ void right() {
   
   if (rotateLimit < 7) {
     for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
-      digitalWrite(stepPin,HIGH); 
-      delayMicroseconds(1000); 
-      digitalWrite(stepPin,LOW); 
-      delayMicroseconds(1000); 
+      digitalWrite(enA,HIGH);
+      digitalWrite(stepPin,HIGH);
+      delayMicroseconds(50);
+      digitalWrite(stepPin,LOW);
+      delayMicroseconds(50); 
     }
     rotateLimit = rotateLimit + 1;
   } else {
