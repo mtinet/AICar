@@ -215,15 +215,17 @@ void loop() {
         Serial.println("SSSS");
       }
 
-      // 좌우 조향만 인공지능으로 할 때 주석해제
-      if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      // 좌우 조향만 인공지능으로 할 때 주석해제, a는 좌회전, d는 우회전
+      if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면
         right();
-      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면
         left();
       }
 
-      // 기존 인공지능 모드를 사용할 때 주석 해제
-//      if (cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
+      
+
+      // 기존 인공지능 모드를 사용할 때 주석 해제, a는 좌회전, d는 우회전, w는 전진, x는 후진, s는 차량정지
+//      if (cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 w이면
 //        Serial.println(cmdM);
 //        if(cmdM == 'w'){
 //          forward();
@@ -232,7 +234,7 @@ void loop() {
 //          forward();
 //        }
 //        cmdM = 'w';
-//      } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
+//      } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 x면
 //        if(cmdM == 'x') {
 //          backward();
 //        } else {
@@ -240,9 +242,9 @@ void loop() {
 //          backward();
 //        }
 //        cmdM = 'x';
-//      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+//      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면
 //        right();
-//      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+//      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면
 //        left();
 //      } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면
 //        motorStop();
