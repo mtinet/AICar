@@ -41,7 +41,7 @@ const int enA = 4;  // 구동 여부 결정
 const int stepPin = 5; // 스텝 펄스
 const int dirPinLR = 6;  // 좌우 회전
 
-const int STEPS_PER_REV = 1600; // 모터 1회전 
+const int STEPS_PER_REV = 1600; // 모터 1회전, TB6600 스텝 모터 드라이버도 1600펄스에 3.5암페어로 정함(off, on, off, off, off, off)  
 
 int rotateLimit = 4;
 
