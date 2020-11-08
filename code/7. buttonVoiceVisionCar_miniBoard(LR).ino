@@ -103,8 +103,7 @@ void setup() {
   Serial.println("AI Go-Kart is Ready!");
 }
 
-void loop() {9i
-
+void loop() {
   //  modestate가 1이면 페달제어 모드로 수행
   if(modeState == 1) {  
     Serial.print("Manual mode  ");  
