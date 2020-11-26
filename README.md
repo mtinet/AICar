@@ -49,3 +49,5 @@
 * [앱인벤터 코드 작성 참고자료](http://blog.naver.com/PostView.nhn?blogId=kids_power&logNo=221368450791&parentCategoryNo=&categoryNo=42&viewDate=&isShowPopularPosts=true&from=search)  
 * [앱인벤터, 아두이노 통신](http://sanguru.me/arduino009/) 
 * [딕셔너리 결과물 보는 방법](http://ai2.appinventor.mit.edu/reference/blocks/dictionaries.html#get-value-at-key-path)  
+* [BLE 세팅](http://www.martyncurrey.com/arduino-hm-10-and-app-inventor-2/#AI2)  
+
