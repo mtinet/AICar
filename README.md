@@ -46,7 +46,40 @@
 * [익스텐션 다운로드](https://mit-cml.github.io/extensions/) : PersonalImageClassifier, BLE 다운로드 받을 것  
 * BLE 세팅 방법  
 ![](https://github.com/mtinet/AICar/blob/master/image/bleConnect.png?raw=true)  
+```
+serviceUUID : 0000FFE0-0000-1000-8000-00805F9B34FB
+name : 아두이노의 AT커맨드로 자기가 지정해 준 이름 입력  
+```
+* 아두이노 AT 커맨드 사용할 때 업로드 해야하는 코드, 블루투스 모듈(HM-10)이 다른 장치에 연결되지 않은 상태에서만 AT 커맨드가 적용됨, 아두이노의 시리얼 모니터 하단에 있는 옵션에서는 'line ending 없음' 또는 'Both NL & ER'을 선택하고, 통신속도는 9600보드레이트로 선택함  
+```
+#include <SoftwareSerial.h>
 
+SoftwareSerial mySerial(10, 11); // RX, TX
+
+void setup() {
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+
+
+  Serial.println("Goodnight moon!");
+
+  // set the data rate for the SoftwareSerial port
+  mySerial.begin(9600);
+  mySerial.println("Hello, world?");
+}
+
+void loop() { // run over and over
+  if (mySerial.available()) {
+    Serial.write(mySerial.read());
+  }
+  if (Serial.available()) {
+    mySerial.write(Serial.read());
+  }
+}
+```
 
 ### 참고자료  
 * [앱인벤터 코드 작성 참고자료](http://blog.naver.com/PostView.nhn?blogId=kids_power&logNo=221368450791&parentCategoryNo=&categoryNo=42&viewDate=&isShowPopularPosts=true&from=search)  
