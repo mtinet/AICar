@@ -43,7 +43,10 @@
 
 ### 앱인벤터  
 * [이미지 분류 학습](https://classifier.appinventor.mit.edu/)  
-* [익스텐션 다운로드](https://mit-cml.github.io/extensions/)  
+* [익스텐션 다운로드](https://mit-cml.github.io/extensions/) : PersonalImageClassifier, BLE 다운로드 받을 것  
+* BLE 세팅 방법  
+![](https://github.com/mtinet/AICar/blob/master/image/bleConnect.png?raw=true)  
+
 
 ### 참고자료  
 * [앱인벤터 코드 작성 참고자료](http://blog.naver.com/PostView.nhn?blogId=kids_power&logNo=221368450791&parentCategoryNo=&categoryNo=42&viewDate=&isShowPopularPosts=true&from=search)  
