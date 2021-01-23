@@ -6,9 +6,9 @@
          
 - 조향 :  
 아두이노 UNO - 모터 드라이버(점퍼는 사진 확인 후 적용)  
-         p6 - enA 
-         p7 - PUL(펄스)  
-         p5 - DIR(디렉션)  
+         p10 - enA 
+         p11 - PUL(펄스)  
+         p12 - DIR(디렉션)  
 모터 드라이버 - 스텝모터(2번, 5번 미사용)  
          A+ - 모터 결선 좌측 1번째  
          A- - 모터 결선 좌측 3번째  
@@ -17,16 +17,17 @@
 모터 드라이버의 점퍼를 조정해 전류를 제어할 수 있음  
 모터는 K6G50C 1:50 기어박스가 포함되어 있음  
 현재 세팅은 점퍼 스위치 세팅 : 110010 (피크 전류 3.2A, RMS 3.0A, 200pulse/rev)  
+
 - 페달모드 :
 아두이노 - 페달
      A0 - 노랑
-     p2  - 스위치-전진
-     p3  - 스위치-후진
-     p4  - ground
+     p7  - 스위치-전진
+     p6  - 스위치-후진
+
 - 구동 :  
 아두이노 MEGA - 모터 드라이버  
-전진후진(P10) - dir입력(모터 회전 방향)  
-PWM출력(p11) - PWM입력(파워)  
+전진후진(P8) - dir입력(모터 회전 방향)  
+PWM출력(p9) - PWM입력(파워)  
 
 */
 
@@ -36,26 +37,26 @@ PWM출력(p11) - PWM입력(파워)
 SoftwareSerial mySerial(2, 3); // RX, TX
 
 // 스텝 모터 제어
-const int enA = 6;  // 구동 여부 결정
-const int stepPin = 7; // 스텝 펄스
-const int dirPinLR = 5;  // 좌우 회전
+const int enA = 10;  // 구동 여부 결정
+const int stepPin = 11; // 스텝 펄스
+const int dirPinLR = 12;  // 좌우 회전
 
 const int STEPS_PER_REV = 1600; // 모터 1회전, TB6600 스텝 모터 드라이버도 1600펄스에 3.5암페어로 정함(off, on, off, off, off, off)  
 
 int rotateLimit = 4;
 
 // 드라이브 모터 제어
-const int DIR = 10; // 파워
-const int PWM = 11; // 신호 1 
+const int DIR = 8; // 파워
+const int PWM = 9; // 신호 1 
 
 
 const int valocity = 100;
 
 // 페달 제어_전진, 후진 스위치 센싱
-int pedalF = 2;
+int pedalF = 7;
 boolean pedalFVal = 0;
 
-int pedalB = 3;
+int pedalB = 6;
 boolean pedalBVal = 0;
 
 const int ground = 4;
