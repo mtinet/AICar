@@ -17,38 +17,35 @@
 모터 드라이버의 점퍼를 조정해 전류를 제어할 수 있음  
 모터는 K6G50C 1:50 기어박스가 포함되어 있음  
 현재 세팅은 점퍼 스위치 세팅 : 110010 (피크 전류 3.2A, RMS 3.0A, 200pulse/rev)  
-
 - 페달모드 :
 아두이노 - 페달
      A0 - 노랑
      p7  - 스위치-전진
      p6  - 스위치-후진
-
 - 구동 :  
 아두이노 MEGA - 모터 드라이버  
 전진후진(P8) - dir입력(모터 회전 방향)  
 PWM출력(p9) - PWM입력(파워)  
-
 */
 
 
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(2, 3); // RX, TX
+//SoftwareSerial mySerial(2, 3); // RX, TX
 
 // 스텝 모터 제어
 const int enA = 10;  // 구동 여부 결정
 const int stepPin = 11; // 스텝 펄스
 const int dirPinLR = 12;  // 좌우 회전
+const int rst = 5;
 
-const int STEPS_PER_REV = 1600; // 모터 1회전, TB6600 스텝 모터 드라이버도 1600펄스에 3.5암페어로 정함(off, on, off, off, off, off)  
+const int STEPS_PER_REV = 400; // 모터 1회전, TB6600 스텝 모터 드라이버도 1600펄스에 3.5암페어로 정함(off, on, off, off, off, off)  
 
 int rotateLimit = 4;
 
 // 드라이브 모터 제어
 const int DIR = 8; // 파워
 const int PWM = 9; // 신호 1 
-
 
 const int valocity = 100;
 
@@ -78,13 +75,16 @@ char cmdM = "";
 void setup() {
   //통신 설정
   Serial.begin(9600); // 시리얼 통신
-  mySerial.begin(9600); // 블루투스 통신             
+  //mySerial.begin(9600); // 블루투스 통신  
+  Serial3.begin(9600);           
 
   // 스텝모터 핀 모드 설정
   pinMode(dirPinLR,OUTPUT);
   pinMode(stepPin,OUTPUT); 
   pinMode(enA, OUTPUT);
-  digitalWrite(enA, LOW);
+  digitalWrite(enA, HIGH);
+  pinMode(rst, OUTPUT);
+  digitalWrite(rst, LOW);
 
   // 드라이브모터 핀 모드 설정
   pinMode(PWM,OUTPUT); 
@@ -111,7 +111,7 @@ void loop() {
     pedalVal = map(pedalVal, 230, 850, 0, 255);
     pedalVal = constrain(pedalVal, 0, 255);
 
-    // 페달 값 변화 시리얼 모니터링
+    // 페달 값 변화 시리얼 모니터 링
     Serial.print(pedalFVal);
     Serial.print("  ");
     Serial.print(pedalBVal);
@@ -127,7 +127,7 @@ void loop() {
     }
 
     // 전진, 후진 스위치 값에 따른 페달 동작
-    if (pedalFVal == 1 && pedalBVal == 0) {
+    if (pedalFVal == 1 && pedalBVal == 1) {
       digitalWrite(DIR,HIGH); 
       analogWrite(PWM, pedalVal);
       Serial.println("RRRR");
@@ -199,7 +199,7 @@ void left() {
     // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
     // 따라서, 모터가 1.5회전하면 바퀴가 10.8도 회전함
     for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
-      digitalWrite(enA,LOW);
+      digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
       digitalWrite(stepPin,LOW);
@@ -218,7 +218,7 @@ void right() {
   
   if (rotateLimit < 7) {
     for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
-      digitalWrite(enA,LOW);
+      digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
       digitalWrite(stepPin,LOW);
