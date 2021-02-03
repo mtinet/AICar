@@ -130,11 +130,11 @@ void loop() {
     if (pedalFVal == 1 && pedalBVal == 1) {
       digitalWrite(DIR,HIGH); 
       analogWrite(PWM, pedalVal);
-      Serial.println("RRRR");
+      Serial.println("FFFF");
     } else if (pedalFVal == 0 && pedalBVal == 1) {
       digitalWrite(DIR,LOW);
       analogWrite(PWM, pedalVal);
-      Serial.println("FFFF");
+      Serial.println("RRRR");
     } else {
       digitalWrite(DIR,LOW);  
       analogWrite(PWM, 0);
