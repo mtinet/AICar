@@ -16,7 +16,8 @@
          B- - 모터 결선 좌측 6번째  
 모터 드라이버의 점퍼를 조정해 전류를 제어할 수 있음  
 모터는 K6G50C 1:50 기어박스가 포함되어 있음  
-현재 세팅은 점퍼 스위치 세팅 : 110010 (피크 전류 3.2A, RMS 3.0A, 200pulse/rev)  
+점퍼는 off-on-off(200pulse/rev)로 세팅합니다. 
+
 - 페달모드 :
 아두이노 - 페달
      A0 - 노랑
@@ -28,18 +29,17 @@
 PWM출력(p9) - PWM입력(파워)  
 */
 
-
+// 소프트웨어 시리얼은 아두이노 우노를 사용할 때는 아래 두 줄을 주석해제 합니다.
 //#include <SoftwareSerial.h>
-
 //SoftwareSerial mySerial(2, 3); // RX, TX
 
 // 스텝 모터 제어
 const int enA = 10;  // 구동 여부 결정
 const int stepPin = 11; // 스텝 펄스
 const int dirPinLR = 12;  // 좌우 회전
-const int rst = 5;
+const int rst = 5; // 리셋, LOW 상태로 유지함
 
-const int STEPS_PER_REV = 400; // 모터 1회전, TB6600 스텝 모터 드라이버도 1600펄스에 3.5암페어로 정함(off, on, off, off, off, off)  
+const int STEPS_PER_REV = 400; // 모터 2회전, 점퍼는 off-on-off로 세팅함(200pulse/rev)
 
 int rotateLimit = 4;
 
@@ -73,9 +73,13 @@ char cmd = "";
 char cmdM = "";
 
 void setup() {
-  //통신 설정
+  //모니터링을 위한 시리얼 통신 설정
   Serial.begin(9600); // 시리얼 통신
+  
+  //mySerial은 소프트웨어 시리얼입니다. 아두이노 우노를 사용할 때 주석을 해제해주세요.
   //mySerial.begin(9600); // 블루투스 통신  
+
+  //Serial3는 아두이노 메가를 사용할 때 사용하는 시리얼입니다. 아두이노 우노를 사용하면 주석처리 하세요.
   Serial3.begin(9600);           
 
   // 스텝모터 핀 모드 설정
@@ -141,7 +145,9 @@ void loop() {
       Serial.println("SSSS");
     }
   }
-         
+
+  // 아두이노 메가를 쓸 때는 Serial3를 그대로 사용하고, 아두이노 우노를 쓸 때는 Serial3를 mySerial로 수정해주세요. 
+  // 아두이노 메가를 쓸 때는 SW6 스위치를 기판중심쪽으로 옮기고, 아두이노 우노를 쓸 때는 SW6 스위치를 기판 바깥쪽으로 옮겨주세요.
   if (Serial3.available() ){        // 블루투스 통신에 데이터가 있을 경우
     cmd = Serial3.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
