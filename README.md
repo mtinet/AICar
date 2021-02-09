@@ -1,5 +1,8 @@
 # AICar
 
+### 블루투스 내부 배선  
+![](https://github.com/mtinet/AICar/blob/master/image/circuit1.png?raw=true)  
+
 ### 앱인벤터  
 * [이미지 분류 학습](https://classifier.appinventor.mit.edu/)  
 * [익스텐션 다운로드](https://mit-cml.github.io/extensions/) : PersonalImageClassifier, BLE 다운로드 받을 것  
