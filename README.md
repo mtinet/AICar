@@ -1,46 +1,5 @@
 # AICar
 
-### 1. 페달 테스트  
-* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/1.%20pedal.ino)  
-* 테스트 이미지  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide1.jpg?raw=true) 
-
-### 2. 전진, 후진 스위치 테스트  
-* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/2.%20switch.ino)  
-* 테스트 이미지  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide2.jpg?raw=true) 
-
-### 3. 블루투스 테스트  
-* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/3.%20bluetooth.ino)  
-* 테스트 이미지  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide3.jpg?raw=true)  
-
-### 4. 스텝모터 테스트  
-* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/4.%20stepMotor.ino)  
-* 테스트 이미지  
-![](https://github.com/mtinet/autonomousCar/blob/master/image/stepMotorCircuit.jpg?raw=true)  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide4.jpg?raw=true) 
-
-### 5. DC모터 테스트  
-* [코드 링크]()  
-* 테스트 이미지  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide5.jpg?raw=true)  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide6.jpg?raw=true) 
-
-### 6. 배터리 연결 및 비상정지 스위치 
-* [코드 링크]()  
-* 테스트 이미지  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide7.jpg?raw=true) 
-
-### 7. 전체 테스트  
-* [코드 링크](https://github.com/mtinet/AICar/blob/master/code/1.%20buttonVoiceVisionCar_miniboard.ino)  
-![](https://github.com/mtinet/AICar/blob/master/image/Slide8.jpg?raw=true)  
-
-### 모터 드라이버 구입  
-* [[SMG-A] 12V/24V 7A 160W 듀얼 DC 모터 드라이버 모듈 [SZH-CH076]](https://www.devicemart.co.kr/goods/view?no=1361692)  
-* [[ITM] TB6600 스테핑 모터드라이버](https://www.devicemart.co.kr/goods/view?no=10894384)  
-* [Electric Bike/Scooter Foot Pedal Throttle Ebike Electric Tricycle Accelerator Pedal Speed Control Bicycle kit](https://www.aliexpress.com/item/32916923695.html?spm=a2g0o.cart.0.0.6cd43c00q48Iys&mp=1)  
-
 ### 앱인벤터  
 * [이미지 분류 학습](https://classifier.appinventor.mit.edu/)  
 * [익스텐션 다운로드](https://mit-cml.github.io/extensions/) : PersonalImageClassifier, BLE 다운로드 받을 것  
@@ -52,29 +11,18 @@ name : 아두이노의 AT커맨드로 자기가 지정해 준 이름 입력
 ```
 * 아두이노 AT 커맨드 사용할 때 업로드 해야하는 코드, 블루투스 모듈(HM-10)이 다른 장치에 연결되지 않은 상태에서만 AT 커맨드가 적용됨, 아두이노의 시리얼 모니터 하단에 있는 옵션에서는 'line ending 없음' 또는 'Both NL & ER'을 선택하고, 통신속도는 9600보드레이트로 선택함  
 ```
-#include <SoftwareSerial.h>
-
-SoftwareSerial mySerial(2, 3); // RX, TX
-
 void setup() {
-  Serial.begin(9600);
-  while (!Serial) {
-    ; 
-  }
-
-  Serial.println("Goodnight moon!");
-
-  mySerial.begin(9600);
-  mySerial.println("Hello, world?");
+  //통신 설정
+  Serial.begin(9600); // 시리얼 통신(컴퓨터-USB케이블-아두이노 메가)
+  Serial3.begin(9600); // 블루투스 통신(스마트폰 앱-블루투스-아두이노 메가)
+  Serial.println("start");
 }
 
-void loop() { 
-  if (mySerial.available()) {
-    Serial.write(mySerial.read());
-  }
-  if (Serial.available()) {
-    mySerial.write(Serial.read());
-  }
+void loop() {
+  if (Serial3.available())        // 블루투스에서 데이터가 들어올 경우
+    Serial.write(Serial3.read()); // 컴퓨터로 보냄
+  if (Serial.available())         // 컴퓨터에서 데이터가 들어올 경우
+    Serial3.write(Serial.read()); // 블루투스로 보냄
 }
 ```
 
