@@ -142,8 +142,8 @@ void loop() {
     }
   }
          
-  if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if (Serial3.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    cmd = Serial3.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
     // cmd 변수의 데이터가 m이면 수동모드로, i면 앱모드로 modeState 변수의 상태를 바꿈
     if (cmd == 'm') {
