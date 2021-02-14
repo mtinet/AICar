@@ -1,6 +1,6 @@
 # AICar
 
-### 블루투스 내부 배선  
+### 아두이노 메가 사용 시 블루투스 내부 배선  
 ![](https://github.com/mtinet/AICar/blob/master/image/circuit1.png?raw=true)  
 
 ### 앱인벤터  
