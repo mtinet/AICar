@@ -17,7 +17,6 @@
 모터 드라이버의 점퍼를 조정해 전류를 제어할 수 있음  
 모터는 K6G50C 1:50 기어박스가 포함되어 있음  
 점퍼는 off-on-off(200pulse/rev)로 세팅합니다. 
-
 - 페달모드 :
 아두이노 - 페달
      A0 - 노랑
@@ -50,10 +49,10 @@ const int PWM = 9; // 신호 1
 const int valocity = 100;
 
 // 페달 제어_전진, 후진 스위치 센싱
-int pedalF = 7;
+int pedalF = 6;
 boolean pedalFVal = 0;
 
-int pedalB = 6;
+int pedalB = 7;
 boolean pedalBVal = 0;
 
 const int ground = 4;
@@ -131,14 +130,14 @@ void loop() {
     }
 
     // 전진, 후진 스위치 값에 따른 페달 동작
-    if (pedalFVal == 0 && pedalBVal == 1) {
+    if (pedalFVal == 1 && pedalBVal == 1) {
       digitalWrite(DIR,HIGH); 
       analogWrite(PWM, pedalVal);
-      Serial.println("FFFF");
-    } else if (pedalFVal == 1 && pedalBVal == 1) {
+      Serial.println("RRRR");
+    } else if (pedalFVal == 1 && pedalBVal == 0) {
       digitalWrite(DIR,LOW);
       analogWrite(PWM, pedalVal);
-      Serial.println("RRRR");
+      Serial.println("FFFF");
     } else {
       digitalWrite(DIR,LOW);  
       analogWrite(PWM, 0);
@@ -239,7 +238,7 @@ void right() {
 
 void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
-  digitalWrite(DIR,HIGH); 
+  digitalWrite(DIR,LOW); 
   analogWrite(PWM, i);
 
   if(i != valocity) {
@@ -261,7 +260,7 @@ void motorStop() {
 
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
-  digitalWrite(DIR,LOW); 
+  digitalWrite(DIR,HIGH); 
   analogWrite(PWM, i);
   
   if(i != valocity) {
