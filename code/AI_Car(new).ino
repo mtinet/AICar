@@ -165,7 +165,7 @@ void loop() {
     
     // modestate가 0이면 앱제어 모드로 수행
     if (modeState == 0) {
-      if (cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 w이면 전진
+      if (cmd == 'w' ){               // 만약 w가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 w이면 전진유지, 아니면 천천히 가속하여 전진
         Serial.println(cmdM);
         if(cmdM == 'w'){
           forward();
@@ -174,7 +174,8 @@ void loop() {
           forward();
         }
         cmdM = 'w';
-      } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 x면 후진
+      } else if ( cmd == 'x') {        // 만약 x가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 x이면 후진유지, 아니면 천천히 가속하여 후진
+        Serial.println(cmdM);
         if(cmdM == 'x') {
           backward();
         } else {
