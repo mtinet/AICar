@@ -46,7 +46,7 @@ int rotateLimit = 4;
 const int DIR = 8; // 파워
 const int PWM = 9; // 신호 1 
 
-const int valocity = 100;
+int valocity = 100;
 
 // 페달 제어_전진, 후진 스위치 센싱
 int pedalF = 6;
@@ -165,7 +165,7 @@ void loop() {
     
     // modestate가 0이면 앱제어 모드로 수행
     if (modeState == 0) {
-      if (cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
+      if (cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 w이면 전진
         Serial.println(cmdM);
         if(cmdM == 'w'){
           forward();
@@ -174,7 +174,7 @@ void loop() {
           forward();
         }
         cmdM = 'w';
-      } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
+      } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 x면 후진
         if(cmdM == 'x') {
           backward();
         } else {
@@ -182,12 +182,26 @@ void loop() {
           backward();
         }
         cmdM = 'x';
-      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면 좌회전
         right();
-      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면 우회전
         left();
-      } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면
+      } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면 정지
         motorStop();
+      } else if ( cmd == 'o' ) {       // 아니고 만약 'cmd' 변수의 데이터가 o면 속도 줄이기
+        valocity -= 30;
+        if (valocity < 30) {
+          valocity = 30;
+        }
+        Serial.print("Speed Down! Current Speed is ");
+        Serial.println(valocity);
+      } else if ( cmd == 'p' ) {       // 아니고 만약 'cmd' 변수의 데이터가 p면 속도 높이기
+        valocity += 30;
+        if (valocity > 250) {
+          valocity = 250;
+        }
+        Serial.print("Speed Up! Current Speed is ");
+        Serial.println(valocity);
       }
     }
   }
