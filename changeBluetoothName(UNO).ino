@@ -6,7 +6,7 @@ void setup() {
   //통신 설정
   Serial.begin(9600); // 시리얼 통신(컴퓨터-USB케이블-아두이노 메가)
   mySerial.begin(9600); // 블루투스 통신(스마트폰 앱-블루투스-아두이노 우노 소프트웨어 시리얼)
-  Serial.println("start");
+  Serial.println("You Can set your Bluetooth by AT Command now");
 }
 
 void loop() {
