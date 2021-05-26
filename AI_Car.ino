@@ -218,7 +218,7 @@ void left() {
     // 1000마이크로초 주기로 모터 축이 1.5회전하는 코드
     // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
     // 따라서, 모터가 1.5회전하면 바퀴가 10.8도 회전함
-    for(int x = 0; x < STEPS_PER_REV*2; x++) {
+    for(int x = 0; x < STEPS_PER_REV*1; x++) {
       digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
@@ -237,7 +237,7 @@ void right() {
   digitalWrite(dirPinLR,LOW); 
   
   if (rotateLimit < 5) {
-    for(int x = 0; x < STEPS_PER_REV*2; x++) {
+    for(int x = 0; x < STEPS_PER_REV*1; x++) {
       digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
