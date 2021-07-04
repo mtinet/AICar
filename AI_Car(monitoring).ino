@@ -39,22 +39,22 @@ const int dirPinLR = 12;  // 좌우 회전
 const int rst = 5; // 리셋, LOW 상태로 유지함
 
 const int STEPS_PER_REV = 400; // 모터 2회전, 점퍼는 off-on-off로 세팅함(200pulse/rev)
-
-int rotatePos = 4;
+int rotatePos = 10;
+int rotateMid = 10;
 int rotateLeftLimit = 0;
-int rotateRightLimit = 7;
+int rotateRightLimit = 20;
 
 // 드라이브 모터 제어
 const int DIR = 8; // 파워
 const int PWM = 9; // 신호 1 
 
-const int valocity = 100;
+int valocity = 100;
 
 // 페달 제어_전진, 후진 스위치 센싱
-int pedalF = 7;
+int pedalF = 6;
 boolean pedalFVal = 0;
 
-int pedalB = 6;
+int pedalB = 7;
 boolean pedalBVal = 0;
 
 const int ground = 4;
@@ -71,7 +71,7 @@ int i = 0;
 
 // 입력 문자, 입력 문자 백업
 char cmd = "";
-char cmdM = "";
+char cmdM = "s";
 
 void setup() {
   //모니터링을 위한 시리얼 통신 설정
@@ -135,11 +135,11 @@ void loop() {
     if (pedalFVal == 1 && pedalBVal == 1) {
       digitalWrite(DIR,HIGH); 
       analogWrite(PWM, pedalVal);
-      Serial.println("FFFF");
-    } else if (pedalFVal == 0 && pedalBVal == 1) {
+      Serial.println("RRRR");
+    } else if (pedalFVal == 1 && pedalBVal == 0) {
       digitalWrite(DIR,LOW);
       analogWrite(PWM, pedalVal);
-      Serial.println("RRRR");
+      Serial.println("FFFF");
     } else {
       digitalWrite(DIR,LOW);  
       analogWrite(PWM, 0);
@@ -148,7 +148,7 @@ void loop() {
   }
 
   // 아두이노 메가를 쓸 때는 Serial3를 그대로 사용하고, 아두이노 우노를 쓸 때는 Serial3를 mySerial로 수정해주세요. 
-  // 아두이노 메가를 쓸 때는 SW6 스위치를 기판중심쪽으로 옮기고, 아두이노 우노를 쓸 때는 SW6 스위치를 기판 바깥쪽으로 옮겨주세요.
+  // 아두이노 메가를 쓸 때는 SW6 스위치를 3번쪽으로 옮기고, 아두이노 우노를 쓸 때는 SW6 스위치를 1번쪽으로 옮겨주세요.
   if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
     cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
@@ -167,8 +167,8 @@ void loop() {
     
     // modestate가 0이면 앱제어 모드로 수행
     if (modeState == 0) {
-      if (cmd == 'w' ){               // 만약 'cmd' 변수의 데이터가 q이면
-        Serial.println(cmdM);
+      if (cmd == 'w' ){               // 만약 w가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 w이면 전진유지, 아니면 천천히 가속하여 전진
+        Serial.println(cmd);
         if(cmdM == 'w'){
           forward();
         } else {
@@ -176,7 +176,8 @@ void loop() {
           forward();
         }
         cmdM = 'w';
-      } else if ( cmd == 'x') {        // 아니고 만약 'cmd' 변수의 데이터가 w면
+      } else if ( cmd == 'x') {        // 만약 x가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 x이면 후진유지, 아니면 천천히 가속하여 후진
+        Serial.println(cmd);
         if(cmdM == 'x') {
           backward();
         } else {
@@ -184,12 +185,26 @@ void loop() {
           backward();
         }
         cmdM = 'x';
-      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면 좌회전
         right();
-      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 e면
+      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면 우회전
         left();
-      } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면
+      } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면 정지
         motorStop();
+      } else if ( cmd == 'o' ) {       // 아니고 만약 'cmd' 변수의 데이터가 o면 속도 줄이기
+        valocity -= 30;
+        if (valocity < 30) {
+          valocity = 30;
+        }
+        Serial.print("Speed Down! Current Speed is ");
+        Serial.println(valocity);
+      } else if ( cmd == 'p' ) {       // 아니고 만약 'cmd' 변수의 데이터가 p면 속도 높이기
+        valocity += 30;
+        if (valocity > 250) {
+          valocity = 250;
+        }
+        Serial.print("Speed Up! Current Speed is ");
+        Serial.println(valocity);
       }
     }
   }
@@ -205,7 +220,7 @@ void left() {
     // 1000마이크로초 주기로 모터 축이 1.5회전하는 코드
     // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
     // 따라서, 모터가 1.5회전하면 바퀴가 10.8도 회전함
-    for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
+    for(int x = 0; x < STEPS_PER_REV*1; x++) {
       digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
@@ -224,7 +239,7 @@ void right() {
   digitalWrite(dirPinLR,LOW); 
   
   if (rotatePos < rotateRightLimit) {
-    for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
+    for(int x = 0; x < STEPS_PER_REV*1; x++) {
       digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
@@ -240,13 +255,27 @@ void right() {
 
 void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
-  digitalWrite(DIR,HIGH); 
+  digitalWrite(DIR,LOW); 
   analogWrite(PWM, i);
 
-  if(i != valocity) {
+  if (i != valocity) {
     for (i = 0; i < valocity; i = i + 10) {
       analogWrite(PWM, i);
       delay(100);
+    }
+  }
+
+  if (rotateMid > rotatePos) {
+    int j = rotateMid - rotatePos;
+    for (int k = 0; k < j; k++) {
+      right();
+    }
+  } else if (rotateMid == rotatePos) {
+    
+  } else if (rotateMid < rotatePos) {
+    int j = rotatePos - rotateMid;
+    for (int k = 0; k < j; k++) {
+      left();
     }
   }
   Serial.println("forward");
@@ -258,11 +287,13 @@ void motorStop() {
   analogWrite(PWM, 0);
   delay(100);
   Serial.println("motorStop");
+
+  cmdM = 's';
 }
 
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
-  digitalWrite(DIR,LOW); 
+  digitalWrite(DIR,HIGH); 
   analogWrite(PWM, i);
   
   if(i != valocity) {
