@@ -40,7 +40,9 @@ const int rst = 5; // 리셋, LOW 상태로 유지함
 
 const int STEPS_PER_REV = 400; // 모터 2회전, 점퍼는 off-on-off로 세팅함(200pulse/rev)
 
-int rotateLimit = 4;
+int rotatePos = 10;
+int rotateLeftLimit = 0;
+int rotateRightLimit = 20;
 
 // 드라이브 모터 제어
 const int DIR = 8; // 파워
@@ -199,7 +201,7 @@ void left() {
   // 조향 모터가 '반시계방향'으로 회전하도록 신호부여
   digitalWrite(dirPinLR,HIGH); 
   
-  if (rotateLimit > 0) {
+  if (rotatePos > rotateLeftLimit) {
     // 1000마이크로초 주기로 모터 축이 1.5회전하는 코드
     // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
     // 따라서, 모터가 1.5회전하면 바퀴가 10.8도 회전함
@@ -210,18 +212,18 @@ void left() {
       digitalWrite(stepPin,LOW);
       delayMicroseconds(500); 
     }
-    rotateLimit = rotateLimit - 1;
+    rotatePos = rotatePos - 1;
   } else {
-    rotateLimit = 0;
+    rotatePos = 0;
   }
-  Serial.println(rotateLimit);
+  Serial.println(rotatePos);
 }
 
 void right() {
   // 조향 모터가 '시계방향'으로 회전하도록 신호부여
   digitalWrite(dirPinLR,LOW); 
   
-  if (rotateLimit < 7) {
+  if (rotatePos < rotateRightLimit) {
     for(int x = 0; x < STEPS_PER_REV*1.5; x++) {
       digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
@@ -229,11 +231,11 @@ void right() {
       digitalWrite(stepPin,LOW);
       delayMicroseconds(500); 
     }
-    rotateLimit = rotateLimit + 1;
+    rotatePos = rotatePos + 1;
   } else {
-    rotateLimit = 7;
+    rotatePos = 20;
   }
-  Serial.println(rotateLimit);
+  Serial.println(rotatePos);
 }
 
 void forward() {
