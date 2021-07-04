@@ -214,7 +214,7 @@ void left() {
     }
     rotatePos = rotatePos - 1;
   } else {
-    rotatePos = 0;
+    rotatePos = rotateLeftLimit;
   }
   Serial.println(rotatePos);
 }
@@ -233,7 +233,7 @@ void right() {
     }
     rotatePos = rotatePos + 1;
   } else {
-    rotatePos = 20;
+    rotatePos = rotateRightLimit;
   }
   Serial.println(rotatePos);
 }
