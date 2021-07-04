@@ -40,6 +40,7 @@ const int rst = 5; // 리셋, LOW 상태로 유지함
 
 const int STEPS_PER_REV = 400; // 모터 2회전, 점퍼는 off-on-off로 세팅함(200pulse/rev)
 int rotatePos = 10;
+int rotateMid = 10;
 int rotateLeftLimit = 0;
 int rotateRightLimit = 20;
 
@@ -70,7 +71,7 @@ int i = 0;
 
 // 입력 문자, 입력 문자 백업
 char cmd = "";
-char cmdM = "";
+char cmdM = "s";
 
 void setup() {
   //모니터링을 위한 시리얼 통신 설정
@@ -148,8 +149,8 @@ void loop() {
 
   // 아두이노 메가를 쓸 때는 Serial3를 그대로 사용하고, 아두이노 우노를 쓸 때는 Serial3를 mySerial로 수정해주세요. 
   // 아두이노 메가를 쓸 때는 SW6 스위치를 3번쪽으로 옮기고, 아두이노 우노를 쓸 때는 SW6 스위치를 1번쪽으로 옮겨주세요.
-  if (Serial3.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    cmd = Serial3.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
     // cmd 변수의 데이터가 m이면 수동모드로, i면 앱모드로 modeState 변수의 상태를 바꿈
     if (cmd == 'm') {
@@ -167,7 +168,7 @@ void loop() {
     // modestate가 0이면 앱제어 모드로 수행
     if (modeState == 0) {
       if (cmd == 'w' ){               // 만약 w가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 w이면 전진유지, 아니면 천천히 가속하여 전진
-        Serial.println(cmdM);
+        Serial.println(cmd);
         if(cmdM == 'w'){
           forward();
         } else {
@@ -176,7 +177,7 @@ void loop() {
         }
         cmdM = 'w';
       } else if ( cmd == 'x') {        // 만약 x가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 x이면 후진유지, 아니면 천천히 가속하여 후진
-        Serial.println(cmdM);
+        Serial.println(cmd);
         if(cmdM == 'x') {
           backward();
         } else {
@@ -257,10 +258,24 @@ void forward() {
   digitalWrite(DIR,LOW); 
   analogWrite(PWM, i);
 
-  if(i != valocity) {
+  if (i != valocity) {
     for (i = 0; i < valocity; i = i + 10) {
       analogWrite(PWM, i);
       delay(100);
+    }
+  }
+
+  if (rotateMid > rotatePos) {
+    int j = rotateMid - rotatePos;
+    for (int k = 0; k < j; k++) {
+      right();
+    }
+  } else if (rotateMid == rotatePos) {
+    
+  } else if (rotateMid < rotatePos) {
+    int j = rotatePos - rotateMid;
+    for (int k = 0; k < j; k++) {
+      left();
     }
   }
   Serial.println("forward");
@@ -272,6 +287,8 @@ void motorStop() {
   analogWrite(PWM, 0);
   delay(100);
   Serial.println("motorStop");
+
+  cmdM = 's';
 }
 
 void backward() {
