@@ -28,9 +28,12 @@
 PWM출력(p9) - PWM입력(파워)  
 */
 
-// 소프트웨어 시리얼은 아두이노 우노를 사용할 때는 아래 두 줄을 주석해제 합니다.
-//#include <SoftwareSerial.h>
-//SoftwareSerial mySerial(2, 3); // RX, TX
+// 허스키렌즈를 사용하기 위해서 라이브러리 설치가 필요합니다. 
+// 소프트웨어시리얼 핀은 아두이노 메가의 52, 53번을 사용합니다. 
+#include <SoftwareSerial.h>
+#include <HUSKYLENS.h>
+HUSKYLENS huskylens;
+SoftwareSerial mySerial(52, 53); // RX, TX
 
 // 스텝 모터 제어
 const int enA = 10;  // 구동 여부 결정
@@ -77,8 +80,8 @@ void setup() {
   //모니터링을 위한 시리얼 통신 설정
   Serial.begin(9600); // 시리얼 통신
   
-  //mySerial은 소프트웨어 시리얼입니다. 아두이노 우노를 사용할 때 주석을 해제해주세요.
-  //mySerial.begin(9600); // 블루투스 통신  
+  //mySerial은 소프트웨어 시리얼입니다. 
+  mySerial.begin(9600); // 허스키렌즈와 시리얼 통신을 할 때 사용합니다. 
 
   //Serial3는 아두이노 메가를 사용할 때 사용하는 시리얼입니다. 아두이노 우노를 사용하면 주석처리 하세요.
   Serial3.begin(9600);           
@@ -101,7 +104,15 @@ void setup() {
   pinMode(ground, OUTPUT);
   digitalWrite(ground, LOW);
 
-  Serial.println("AI Go-Kart is Ready!");
+    while (!huskylens.begin(mySerial))
+  {
+    Serial.println(F("Begin failed!"));
+    Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
+    Serial.println(F("2.Please recheck the connection."));
+    delay(100);
+  }
+       
+  Serial.println("Huskylens Go-Kart is Ready!");
 }
 
 void loop() {
