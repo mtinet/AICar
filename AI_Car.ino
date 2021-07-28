@@ -41,8 +41,8 @@ const int rst = 5; // 리셋, LOW 상태로 유지함
 const int STEPS_PER_REV = 400; // 모터 2회전, 점퍼는 off-on-off로 세팅함(200pulse/rev)
 int rotatePos = 10;
 int rotateMid = 10;
-int rotateLeftLimit = 0;
-int rotateRightLimit = 20;
+int rotateLeftLimit = 5;
+int rotateRightLimit = 15;
 
 // 드라이브 모터 제어
 const int DIR = 8; // 파워
