@@ -104,8 +104,7 @@ void setup() {
   pinMode(ground, OUTPUT);
   digitalWrite(ground, LOW);
 
-    while (!huskylens.begin(mySerial))
-  {
+  while (!huskylens.begin(mySerial)){
     Serial.println(F("Begin failed!"));
     Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
     Serial.println(F("2.Please recheck the connection."));
@@ -113,6 +112,7 @@ void setup() {
   }
        
   Serial.println("Huskylens Go-Kart is Ready!");
+  delay(1000);
 }
 
 void loop() {
@@ -173,50 +173,63 @@ void loop() {
     if (cmd == 'i') {
       modeState = 0;
       Serial.println("input 'i'");
-      Serial.println("the mode is : app control");
-    }    
+      Serial.println("the mode is : huskylens control");
+    } 
+  }   
     
-    // modestate가 0이면 앱제어 모드로 수행
-    if (modeState == 0) {
-      if (cmd == 'w' ){               // 만약 w가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 w이면 전진유지, 아니면 천천히 가속하여 전진
-        Serial.println(cmd);
-        if(cmdM == 'w'){
-          forward();
-        } else {
-          i = 0;
-          forward();
+  // modestate가 0이면 허스키렌즈제어 모드로 수행
+  if (modeState == 0) {
+      // 아래는 허스키 렌즈로 제어할 때 사용
+    if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+    else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+    else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
+    else
+    {
+      while (huskylens.available())
+      {
+        HUSKYLENSResult result = huskylens.read();
+        printResult(result);
+        
+        if (cmd == 'w' ){               // 만약 w가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 w이면 전진유지, 아니면 천천히 가속하여 전진
+          Serial.println(cmd);
+          if(cmdM == 'w'){
+            forward();
+          } else {
+            i = 0;
+            forward();
+          }
+          cmdM = 'w';
+        } else if ( cmd == 'x') {        // 만약 x가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 x이면 후진유지, 아니면 천천히 가속하여 후진
+          Serial.println(cmd);
+          if(cmdM == 'x') {
+            backward();
+          } else {
+            i = 0;
+            backward();
+          }
+          cmdM = 'x';
+        } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면 좌회전
+          right();
+        } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면 우회전
+          left();
+        } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면 정지
+          motorStop();
+        } else if ( cmd == 'o' ) {       // 아니고 만약 'cmd' 변수의 데이터가 o면 속도 줄이기
+          valocity -= 30;
+          if (valocity < 30) {
+            valocity = 30;
+          }
+          Serial.print("Speed Down! Current Speed is ");
+          Serial.println(valocity);
+        } else if ( cmd == 'p' ) {       // 아니고 만약 'cmd' 변수의 데이터가 p면 속도 높이기
+          valocity += 30;
+          if (valocity > 250) {
+            valocity = 250;
+          }
+          Serial.print("Speed Up! Current Speed is ");
+          Serial.println(valocity);
         }
-        cmdM = 'w';
-      } else if ( cmd == 'x') {        // 만약 x가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 x이면 후진유지, 아니면 천천히 가속하여 후진
-        Serial.println(cmd);
-        if(cmdM == 'x') {
-          backward();
-        } else {
-          i = 0;
-          backward();
-        }
-        cmdM = 'x';
-      } else if ( cmd == 'a' ) {       // 아니고 만약 'cmd' 변수의 데이터가 a면 좌회전
-        right();
-      } else if ( cmd == 'd' ) {       // 아니고 만약 'cmd' 변수의 데이터가 d면 우회전
-        left();
-      } else if ( cmd == 's' ) {       // 아니고 만약 'cmd' 변수의 데이터가 s면 정지
-        motorStop();
-      } else if ( cmd == 'o' ) {       // 아니고 만약 'cmd' 변수의 데이터가 o면 속도 줄이기
-        valocity -= 30;
-        if (valocity < 30) {
-          valocity = 30;
-        }
-        Serial.print("Speed Down! Current Speed is ");
-        Serial.println(valocity);
-      } else if ( cmd == 'p' ) {       // 아니고 만약 'cmd' 변수의 데이터가 p면 속도 높이기
-        valocity += 30;
-        if (valocity > 250) {
-          valocity = 250;
-        }
-        Serial.print("Speed Up! Current Speed is ");
-        Serial.println(valocity);
-      }
+      }    
     }
   }
 }
@@ -314,4 +327,55 @@ void backward() {
     }
   }
   Serial.println("backward");
+}
+
+void printResult(HUSKYLENSResult result){
+    if (result.command == COMMAND_RETURN_BLOCK){
+      Serial.println(String()+F("Block:xCenter=")+result.xCenter+F(",yCenter=")+result.yCenter+F(",width=")+result.width+F(",height=")+result.height+F(",ID=")+result.ID);
+      
+      if(result.xCenter > 180) {
+        cmd = 'd';
+        Serial.println(String() + cmd + F("  right"));   
+      }
+      if(result.xCenter < 140) {
+        cmd = 'a';
+        Serial.println(String() + cmd + F("  left"));   
+      }
+       if(result.xCenter <= 180 && result.xCenter >=140) {
+        cmd = 's';
+        Serial.println(String() + cmd + F("  left"));   
+      }
+      if(result.width < 60 && result.height < 60) {
+        cmd = 'w';
+        Serial.println(String() + cmd + F("  forward"));      
+      } 
+      if(result.width > 90 && result.height > 90) {
+        cmd = 'x';
+        Serial.println(String() + cmd + F("  backward"));  
+      }
+    }
+    else if (result.command == COMMAND_RETURN_ARROW){
+      Serial.println(String()+F("Arrow:xOrigin=")+result.xOrigin+F(",yOrigin=")+result.yOrigin+F(",xTarget=")+result.xTarget+F(",yTarget=")+result.yTarget+F(",ID=")+result.ID);
+      cmd = 'w';
+      
+      if(result.xOrigin < result.xTarget && result.xOrigin - result.xTarget < -30) {
+        cmd = 'd';
+        Serial.println(String() + cmd + F("  right"));  
+        if(result.xOrigin < 100) {
+          cmd = 'w';
+          Serial.println(String() + cmd + F("  forward"));   
+        } 
+      }
+      if(result.xOrigin > result.xTarget && result.xOrigin - result.xTarget > 30) {
+        cmd = 'a';
+        Serial.println(String() + cmd + F("  left"));   
+        if(result.xOrigin > 200) {
+          cmd = 'w';
+          Serial.println(String() + cmd + F("  forward"));   
+        } 
+      }
+    }
+    else{
+      Serial.println("Object unknown!");
+    }
 }
