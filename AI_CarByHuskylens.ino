@@ -160,29 +160,29 @@ void loop() {
 
   // 아두이노 메가를 쓸 때는 Serial3를 그대로 사용하고, 아두이노 우노를 쓸 때는 Serial3를 mySerial로 수정해주세요. 
   // 아두이노 메가를 쓸 때는 SW6 스위치를 3번쪽으로 옮기고, 아두이노 우노를 쓸 때는 SW6 스위치를 1번쪽으로 옮겨주세요.
-  if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if (Serial3.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    cmd = Serial3.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
     // cmd 변수의 데이터가 m이면 수동모드로, i면 앱모드로 modeState 변수의 상태를 바꿈
     if (cmd == 'm') {
       modeState = 1;
-      Serial.println("input 'm'");
-      Serial.println("the mode is : manual control");
+      Serial3.println("input 'm'");
+      Serial3.println("the mode is : manual control");
     }
     
     if (cmd == 'i') {
       modeState = 0;
-      Serial.println("input 'i'");
-      Serial.println("the mode is : huskylens control");
+      Serial3.println("input 'i'");
+      Serial3.println("the mode is : huskylens control");
     } 
   }   
     
   // modestate가 0이면 허스키렌즈제어 모드로 수행
   if (modeState == 0) {
       // 아래는 허스키 렌즈로 제어할 때 사용
-    if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
-    else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
-    else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
+    if (!huskylens.request()) Serial3.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+    else if(!huskylens.isLearned()) Serial3.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+    else if(!huskylens.available()) Serial3.println(F("No block or arrow appears on the screen!"));
     else
     {
       while (huskylens.available())
