@@ -132,11 +132,11 @@ void loop() {
     }
 
     // 전진, 후진 스위치 값에 따른 페달 동작
-    if (pedalFVal == 1 && pedalBVal == 1) {
+    if (pedalFVal == 1 && pedalBVal == 0) {
       digitalWrite(DIR,LOW); 
       analogWrite(PWM, pedalVal);
       Serial.println("RRRR");
-    } else if (pedalFVal == 1 && pedalBVal == 0) {
+    } else if (pedalFVal == 1 && pedalBVal == 1) {
       digitalWrite(DIR,HIGH);
       analogWrite(PWM, pedalVal);
       Serial.println("FFFF");
