@@ -255,7 +255,7 @@ void right() {
 
 void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
-  digitalWrite(DIR,HIGH); 
+  digitalWrite(DIR,LOW); 
   analogWrite(PWM, i);
 
   if (i != valocity) {
@@ -293,7 +293,7 @@ void motorStop() {
 
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
-  digitalWrite(DIR,LOW); 
+  digitalWrite(DIR,HIGH); 
   analogWrite(PWM, i);
   
   if(i != valocity) {
