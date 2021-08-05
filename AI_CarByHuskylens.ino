@@ -44,14 +44,14 @@ const int rst = 5; // 리셋, LOW 상태로 유지함
 const int STEPS_PER_REV = 400; // 모터 2회전, 점퍼는 off-on-off로 세팅함(200pulse/rev)
 int rotatePos = 10;
 int rotateMid = 10;
-int rotateLeftLimit = 5;
-int rotateRightLimit = 15;
+int rotateLeftLimit = 7;
+int rotateRightLimit = 13;
 
 // 드라이브 모터 제어
 const int DIR = 8; // 파워
 const int PWM = 9; // 신호 1 
 
-int valocity = 100;
+int valocity = 40;
 
 // 페달 제어_전진, 후진 스위치 센싱
 int pedalF = 6;
@@ -279,7 +279,7 @@ void right() {
 
 void forward() {
   //드라이브 모터가 앞으로 회전하도록 신호부여
-  digitalWrite(DIR,HIGH); 
+  digitalWrite(DIR,LOW); 
   analogWrite(PWM, i);
 
   if (i != valocity) {
@@ -317,7 +317,7 @@ void motorStop() {
 
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
-  digitalWrite(DIR,LOW); 
+  digitalWrite(DIR,HIGH); 
   analogWrite(PWM, i);
   
   if(i != valocity) {
@@ -334,12 +334,22 @@ void printResult(HUSKYLENSResult result){
       Serial.println(String()+F("Block:xCenter=")+result.xCenter+F(",yCenter=")+result.yCenter+F(",width=")+result.width+F(",height=")+result.height+F(",ID=")+result.ID);
       
       if(result.xCenter > 180) {
-        cmd = 'd';
-        Serial.println(String() + cmd + F("  right"));   
+        if(cmdM == 'x'){
+          cmd = 'a';
+          Serial.println(String() + cmd + F("  Backward right"));   
+        } else {
+          cmd = 'd';
+          Serial.println(String() + cmd + F("  right"));   
+        }  
       }
       if(result.xCenter < 140) {
-        cmd = 'a';
-        Serial.println(String() + cmd + F("  left"));   
+        if(cmdM == 'x'){
+          cmd = 'd';
+          Serial.println(String() + cmd + F("  left"));   
+        } else {
+          cmd = 'a';
+          Serial.println(String() + cmd + F("  Backward left"));   
+        }
       }
        if(result.xCenter <= 180 && result.xCenter >=140) {
         cmd = 's';
@@ -347,10 +357,12 @@ void printResult(HUSKYLENSResult result){
       }
       if(result.width < 60 && result.height < 60) {
         cmd = 'w';
+        cmdM = 'w';
         Serial.println(String() + cmd + F("  forward"));      
       } 
       if(result.width > 90 && result.height > 90) {
         cmd = 'x';
+        cmdM = 'x';
         Serial.println(String() + cmd + F("  backward"));  
       }
     }
@@ -358,7 +370,7 @@ void printResult(HUSKYLENSResult result){
       Serial.println(String()+F("Arrow:xOrigin=")+result.xOrigin+F(",yOrigin=")+result.yOrigin+F(",xTarget=")+result.xTarget+F(",yTarget=")+result.yTarget+F(",ID=")+result.ID);
       cmd = 'w';
       
-      if(result.xOrigin < result.xTarget && result.xOrigin - result.xTarget < -30) {
+      if(result.xOrigin < result.xTarget && result.xOrigin - result.xTarget < -20) {
         cmd = 'd';
         Serial.println(String() + cmd + F("  right"));  
         if(result.xOrigin < 100) {
@@ -366,14 +378,26 @@ void printResult(HUSKYLENSResult result){
           Serial.println(String() + cmd + F("  forward"));   
         } 
       }
-      if(result.xOrigin > result.xTarget && result.xOrigin - result.xTarget > 30) {
+      else if(result.xOrigin > result.xTarget && result.xOrigin - result.xTarget > 20) {
         cmd = 'a';
         Serial.println(String() + cmd + F("  left"));   
-        if(result.xOrigin > 200) {
+        if(result.xOrigin > 220) {
           cmd = 'w';
           Serial.println(String() + cmd + F("  forward"));   
         } 
       }
+      else if(result.xOrigin < 120 && result.xTarget < 120) {
+        cmd = 'a';
+        Serial.println(String() + cmd + F("  left"));
+      }
+      else if(result.xOrigin > 200 && result.xTarget > 200) {
+        cmd = 'd';
+        Serial.println(String() + cmd + F("  right"));
+      }
+      else {
+        cmd = 'w';
+        Serial.println(String() + cmd + F("  forward"));   
+      } 
     }
     else{
       Serial.println("Object unknown!");
