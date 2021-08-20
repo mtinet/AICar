@@ -41,8 +41,8 @@ const int rst = 5; // 리셋, LOW 상태로 유지함
 const int STEPS_PER_REV = 400; // 모터 2회전, 점퍼는 off-on-off로 세팅함(200pulse/rev)
 int rotatePos = 10;
 int rotateMid = 10;
-int rotateLeftLimit = 5;
-int rotateRightLimit = 15;
+int rotateLeftLimit = 0;
+int rotateRightLimit = 20;
 
 // 드라이브 모터 제어
 const int DIR = 8; // 파워
@@ -132,12 +132,12 @@ void loop() {
     }
 
     // 전진, 후진 스위치 값에 따른 페달 동작
-    if (pedalFVal == 1 && pedalBVal == 0) {
-      digitalWrite(DIR,LOW); 
+    if (pedalFVal == 1 && pedalBVal == 1) {
+      digitalWrite(DIR,HIGH); 
       analogWrite(PWM, pedalVal);
       Serial.println("RRRR");
-    } else if (pedalFVal == 1 && pedalBVal == 1) {
-      digitalWrite(DIR,HIGH);
+    } else if (pedalFVal == 1 && pedalBVal == 0) {
+      digitalWrite(DIR,LOW);
       analogWrite(PWM, pedalVal);
       Serial.println("FFFF");
     } else {
@@ -220,7 +220,7 @@ void left() {
     // 1000마이크로초 주기로 모터 축이 1.5회전하는 코드
     // 1:50 기어박스 내장되어 있으므로, 모터 1회전에 바퀴 7.2도 회전함
     // 따라서, 모터가 1.5회전하면 바퀴가 10.8도 회전함
-    for(int x = 0; x < STEPS_PER_REV*1; x++) {
+    for(int x = 0; x < STEPS_PER_REV*0.3; x++) {
       digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
@@ -239,7 +239,7 @@ void right() {
   digitalWrite(dirPinLR,LOW); 
   
   if (rotatePos < rotateRightLimit) {
-    for(int x = 0; x < STEPS_PER_REV*1; x++) {
+    for(int x = 0; x < STEPS_PER_REV*0.3; x++) {
       digitalWrite(enA,HIGH);
       digitalWrite(stepPin,HIGH);
       delayMicroseconds(500);
