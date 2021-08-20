@@ -214,7 +214,7 @@ void loop() {
 
 void left() {
   // 조향 모터가 '반시계방향'으로 회전하도록 신호부여
-  digitalWrite(dirPinLR,HIGH); 
+  digitalWrite(dirPinLR,LOW); 
   
   if (rotatePos > rotateLeftLimit) {
     // 1000마이크로초 주기로 모터 축이 1.5회전하는 코드
@@ -236,7 +236,7 @@ void left() {
 
 void right() {
   // 조향 모터가 '시계방향'으로 회전하도록 신호부여
-  digitalWrite(dirPinLR,LOW); 
+  digitalWrite(dirPinLR,HIGH); 
   
   if (rotatePos < rotateRightLimit) {
     for(int x = 0; x < STEPS_PER_REV*0.3; x++) {
