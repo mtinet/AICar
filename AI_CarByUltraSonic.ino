@@ -79,8 +79,9 @@ boolean modeState = 1;
 int i = 0;
 
 // 입력 문자, 입력 문자 백업
-char cmd = "";
-char cmdM = "s";
+char cmd = 's';
+char cmdM = 's';
+char cmdO = 'g';
 
 void setup() {
   //모니터링을 위한 시리얼 통신 설정
@@ -117,6 +118,28 @@ void setup() {
   digitalWrite(ground, LOW);
 
   Serial.println("AI Go-Kart is Ready!");
+}
+
+long distance(int triggerPin, int echoPin) {
+  long duration;
+  digitalWrite(triggerPin, LOW);  // 트리거 핀을 낮은 상태로 설정
+  delayMicroseconds(2);          // 2 마이크로초 동안 대기
+  digitalWrite(triggerPin, HIGH); // 트리거 핀을 높은 상태로 설정
+  delayMicroseconds(10);         // 10 마이크로초 동안 대기
+  digitalWrite(triggerPin, LOW);  // 트리거 핀을 다시 낮은 상태로 설정
+
+  duration = pulseIn(echoPin, HIGH); // 에코 핀에서 HIGH 신호가 오는 시간 측정
+  return duration * 0.034 / 2;       // 시간을 거리로 변환 후 반환
+}
+
+void motorStop() {
+  digitalWrite(DIR,LOW);
+  
+  analogWrite(PWM, 0);
+  delay(100);
+  Serial.println("motorStop");
+
+  cmdM = 's';
 }
 
 void left() {
@@ -188,15 +211,7 @@ void forward() {
   Serial.println("forward");
 }
 
-void motorStop() {
-  digitalWrite(DIR,LOW);
-  
-  analogWrite(PWM, 0);
-  delay(100);
-  Serial.println("motorStop");
 
-  cmdM = 's';
-}
 
 void backward() {
   ////드라이브 모터가 뒤로 회전하도록 신호부여
@@ -212,23 +227,70 @@ void backward() {
   Serial.println("backward");
 }
 
-long distance(int triggerPin, int echoPin) {
-  long duration;
-  digitalWrite(triggerPin, LOW);  // 트리거 핀을 낮은 상태로 설정
-  delayMicroseconds(2);          // 2 마이크로초 동안 대기
-  digitalWrite(triggerPin, HIGH); // 트리거 핀을 높은 상태로 설정
-  delayMicroseconds(10);         // 10 마이크로초 동안 대기
-  digitalWrite(triggerPin, LOW);  // 트리거 핀을 다시 낮은 상태로 설정
-
-  duration = pulseIn(echoPin, HIGH); // 에코 핀에서 HIGH 신호가 오는 시간 측정
-  return duration * 0.034 / 2;       // 시간을 거리로 변환 후 반환
-}
 
 void loop() {
+  Serial.print("cmd:");
+  Serial.print(cmd); 
+  Serial.print("    cmdM:");
+  Serial.print(cmdM);
+  Serial.print("    cmdO:");
+  Serial.print(cmdO);
+  Serial.print("   ");
+  
   // 초음파 센서 변수 설정
   distance1 = distance(TRIGGER_PIN1, ECHO_PIN1);
   distance2 = distance(TRIGGER_PIN2, ECHO_PIN2);
+
+  // 거리 측정 결과를 시리얼 모니터에 출력
+  Serial.print("Distance1: ");
+  Serial.print(distance1);
+  Serial.print(" cm, Distance2: ");
+  Serial.print(distance2);
+  Serial.println(" cm");
   
+  // 장애물 감지에 따른 차량 멈춤 로직
+  if ((cmdM == 'w' && distance1 < 100) || (cmdM == 'x' && distance2 < 100)) {
+    if (cmdM == 'w') {
+      Serial.println("Stopping due to obstacle in front");
+      motorStop();
+      cmdO = 'w'; // 멈춤 상태로 전환
+    } else if (cmdM == 'x') {
+      Serial.println("Stopping due to obstacle in back");
+      motorStop();
+      cmdO = 'x'; // 멈춤 상태로 전환
+    }
+  } 
+  
+  // 장애물 해제 시 기존 동작 재개
+  if (cmdO == 'w' && distance1 >= 100) {
+    Serial.println("Resuming movement. Go Forward");
+    delay(500);
+    cmdM = 'w'; 
+    cmd = 'w'; 
+    cmdO = 'g';
+    i = 0; // 속도를 천천히 증가시키기 위해 i를 0으로 리셋
+    
+    // 명령 실행 로직 (cmd 변수에 따라)
+    if (cmd == 'w') {
+      forward();
+    }
+  }
+  
+  if (cmdO == 'x' && distance2 >= 100) {
+    Serial.println("Resuming movement, Go Backward");
+    delay(500);
+    cmd = 'x'; 
+    cmdM = 'x'; 
+    cmdO = 'g';
+    i = 0; // 속도를 천천히 증가시키기 위해 i를 0으로 리셋
+    
+    // 명령 실행 로직 (cmd 변수에 따라)
+    if (cmd == 'x') {
+      backward();
+    }
+  }
+  
+    
   //  modestate가 1이면 페달제어 모드로 수행
   if(modeState == 1) {       
     // 전진, 후진 스위치 값 저장
@@ -259,22 +321,22 @@ void loop() {
     if (pedalFVal == 1 && pedalBVal == 1) {
       digitalWrite(DIR,HIGH); 
       analogWrite(PWM, pedalVal);
-      Serial.println("RRRR");
+      Serial.print("RRRR,   ");
     } else if (pedalFVal == 1 && pedalBVal == 0) {
       digitalWrite(DIR,LOW);
       analogWrite(PWM, pedalVal);
-      Serial.println("FFFF");
+      Serial.print("FFFF,   ");
     } else {
       digitalWrite(DIR,LOW);  
       analogWrite(PWM, 0);
-      Serial.println("SSSS");
+      Serial.print("SSSS,   ");
     }
   }
 
   // 아두이노 메가를 쓸 때는 Serial3를 그대로 사용하고, 아두이노 우노를 쓸 때는 Serial3를 mySerial로 수정해주세요. 
   // 아두이노 메가를 쓸 때는 SW6 스위치를 3번쪽으로 옮기고, 아두이노 우노를 쓸 때는 SW6 스위치를 1번쪽으로 옮겨주세요.
-  if (Serial.available() ){        // 블루투스 통신에 데이터가 있을 경우
-    cmd = Serial.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
+  if (Serial3.available() ){        // 블루투스 통신에 데이터가 있을 경우
+    cmd = Serial3.read();     // 블루투스의 데이터(문자 한 글자)를 'cmd' 변수에 저장
   
     // cmd 변수의 데이터가 m이면 수동모드로, i면 앱모드로 modeState 변수의 상태를 바꿈
     if (cmd == 'm') {
@@ -289,17 +351,19 @@ void loop() {
       Serial.println("the mode is : app control");
     }    
     
+   
     // modestate가 0이면 앱제어 모드로 수행
     if (modeState == 0) {
       if (cmd == 'w' ){               // 만약 w가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 w이면 전진유지, 아니면 천천히 가속하여 전진
         if (distance1 < 100) {
+          Serial.println("Something on Front");
           Serial.print(distance1);
           Serial.print(", ");
           Serial.print(distance2);
           Serial.print(", ");
           motorStop();
+          cmdO = 'w'; // 멈춤 상태로 설정
         } else {
-          Serial.println(cmd);
           if(cmdM == 'w'){
             Serial.print(distance1);
             Serial.print(", ");
@@ -318,13 +382,14 @@ void loop() {
         }
       } else if ( cmd == 'x') {        // 만약 x가 입력되면 이전 입력값'cmdM'을 확인하고, cmdM이 x이면 후진유지, 아니면 천천히 가속하여 후진
         if (distance2 < 100) {
+          Serial.println("Something on Back");
           Serial.print(distance1);
           Serial.print(", ");
           Serial.print(distance2);
           Serial.print(", ");
           motorStop();
+          cmdO = 'x'; // 멈춤 상태로 설정
         } else {
-          Serial.println(cmd);
           if(cmdM == 'x') {
             Serial.print(distance1);
             Serial.print(", ");
